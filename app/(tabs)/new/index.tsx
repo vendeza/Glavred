@@ -1,7 +1,7 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { ComponentProps, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import { FlatList, ListRenderItemInfo, Modal, Platform, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
@@ -49,12 +49,60 @@ const quickActions: { label: string; icon: FeatherIconName }[] = [
   { label: 'References', icon: 'book-open' },
 ];
 
+type Issue = {
+  id: string;
+  issue: string;
+  score: string;
+  advice: string;
+};
+
+const mockIssues: Issue[] = [
+  {
+    id: '1',
+    issue: "First sentence doesn't hook",
+    score: '10/100',
+    advice: 'Add a question or bold statement to create a hook',
+  },
+  {
+    id: '2',
+    issue: "First sentence doesn't hook",
+    score: '10/100',
+    advice: 'Add a question or bold statement to create a hook',
+  },
+  {
+    id: '3',
+    issue: "First sentence doesn't hook",
+    score: '10/100',
+    advice: 'Add a question or bold statement to create a hook',
+  },
+  {
+    id: '4',
+    issue: "First sentence doesn't hook",
+    score: '10/100',
+    advice: 'Add a question or bold statement to create a hook',
+  },
+  {
+    id: '5',
+    issue: "First sentence doesn't hook",
+    score: '10/100',
+    advice: 'Add a question or bold statement to create a hook',
+  },
+  {
+    id: '6',
+    issue: "First sentence doesn't hook",
+    score: '10/100',
+    advice: 'Add a question or bold statement to create a hook',
+  },
+];
+
 export default function NewScreen() {
   const [post, setPost] = useState(defaultPost);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState<HeaderAction['key']>(
     headerActions[0].key,
   );
+  const [selectedIssues, setSelectedIssues] = useState<Set<string>>(new Set(['1']));
+  const [isFixesModalVisible, setIsFixesModalVisible] = useState(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['34%'], []);
 
@@ -66,6 +114,53 @@ export default function NewScreen() {
     setIsAnalyzing(true);
     setTimeout(() => setIsAnalyzing(false), 1200);
   }, [isAnalyzing]);
+
+  const handleFixesPress = useCallback(() => {
+    setIsFixesModalVisible(true);
+  }, []);
+
+  const handleIssueToggle = useCallback((issueId: string) => {
+    setSelectedIssues(prev => {
+      const next = new Set(prev);
+      if (next.has(issueId)) {
+        next.delete(issueId);
+      } else {
+        next.add(issueId);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleSelectAll = useCallback(() => {
+    setSelectedIssues(new Set(mockIssues.map(issue => issue.id)));
+  }, []);
+
+  const handleCloseFixes = useCallback(() => {
+    setIsFixesModalVisible(false);
+  }, []);
+
+  const handleApplyAdvice = useCallback(() => {
+    // TODO: Apply selected advice
+    setIsFixesModalVisible(false);
+  }, []);
+
+  const renderIssue = useCallback(
+    ({ item }: ListRenderItemInfo<Issue>) => (
+      <Pressable style={styles.issueItem} onPress={() => handleIssueToggle(item.id)}>
+        <View style={styles.issueCheckbox}>
+          {selectedIssues.has(item.id) && <Feather name="check" size={16} color="#111827" />}
+        </View>
+        <View style={styles.issueContent}>
+          <ThemedText style={styles.issueTitle}>Issue: {item.issue}</ThemedText>
+          <ThemedText style={styles.issueScore}>Score: {item.score}</ThemedText>
+          <ThemedText style={styles.issueAdvice}>Advice: {item.advice}</ThemedText>
+        </View>
+      </Pressable>
+    ),
+    [handleIssueToggle, selectedIssues],
+  );
+
+  const keyExtractor = useCallback((item: Issue) => item.id, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -111,7 +206,10 @@ export default function NewScreen() {
           <BottomSheetView style={styles.sheetContent}>
             <View style={styles.quickActionsRow}>
               {quickActions.map(({ label, icon }) => (
-                <Pressable key={label} style={styles.quickAction}>
+                <Pressable
+                  key={label}
+                  style={styles.quickAction}
+                  onPress={label === 'Fixes' ? handleFixesPress : undefined}>
                   <View style={styles.quickActionIcon}>
                     <Feather name={icon} size={18} color="#0F172A" />
                   </View>
@@ -139,6 +237,48 @@ export default function NewScreen() {
             </View>
           </BottomSheetView>
         </BottomSheet>
+
+        <Modal
+          visible={isFixesModalVisible}
+          animationType="slide"
+          transparent
+          presentationStyle="overFullScreen">
+          <View style={[styles.modalOverlay, Platform.OS === 'web' && styles.modalOverlayWeb]}>
+            <Pressable style={styles.modalBackdrop} onPress={handleCloseFixes} />
+            <View style={[styles.fixesModal, Platform.OS === 'web' && styles.fixesModalWeb]}>
+              <View style={styles.fixesModalHandle} />
+
+              <View style={styles.fixesHeader}>
+                <View style={styles.fixesHeaderSpacer} />
+                <Pressable onPress={handleSelectAll}>
+                  <ThemedText style={styles.selectAllText}>Select all</ThemedText>
+                </Pressable>
+              </View>
+
+              <FlatList
+                data={mockIssues}
+                keyExtractor={keyExtractor}
+                renderItem={renderIssue}
+                ItemSeparatorComponent={() => <View style={styles.issueDivider} />}
+                style={styles.issuesList}
+                contentContainerStyle={styles.issuesListContent}
+                showsVerticalScrollIndicator
+                bounces
+                nestedScrollEnabled
+                keyboardShouldPersistTaps="handled"
+              />
+
+              <View style={styles.fixesButtons}>
+                <Pressable style={styles.cancelButton} onPress={handleCloseFixes}>
+                  <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
+                </Pressable>
+                <Pressable style={styles.applyButton} onPress={handleApplyAdvice}>
+                  <ThemedText style={styles.applyButtonText}>Apply advice</ThemedText>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </SafeAreaView>
   );
