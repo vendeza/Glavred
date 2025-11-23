@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { ListRenderItemInfo, Modal, Platform, Pressable, View, FlatList } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { styles } from '../styles';
+import { styles } from '@/app/(tabs)/new/styles';
 
 type Issue = {
   id: string;

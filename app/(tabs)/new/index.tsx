@@ -4,11 +4,11 @@ import { ComponentProps, ReactNode, useCallback, useMemo, useRef, useState } fro
 import { Pressable, ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { FixesModal } from '@/components/new/modals/fixes-modal';
+import { GoalModal } from '@/components/new/modals/goal-modal';
+import { HistoryModal } from '@/components/new/modals/history-modal';
+import { ReferencesModal } from '@/components/new/modals/references-modal';
 import { ThemedText } from '@/components/themed-text';
-import { FixesModal } from './modals/fixes-modal';
-import { GoalModal } from './modals/goal-modal';
-import { HistoryModal } from './modals/history-modal';
-import { ReferencesModal } from './modals/references-modal';
 import { PostCard } from './post-card';
 import { styles } from './styles';
 

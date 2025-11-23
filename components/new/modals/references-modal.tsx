@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { Modal, Platform, Pressable, TextInput, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { styles } from '../styles';
+import { styles } from '@/app/(tabs)/new/styles';
 
 type ReferencesModalProps = {
   visible: boolean;

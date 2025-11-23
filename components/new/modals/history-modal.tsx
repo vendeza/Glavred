@@ -1,7 +1,7 @@
 import { Modal, Platform, Pressable, View, FlatList } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { styles } from '../styles';
+import { styles } from '@/app/(tabs)/new/styles';
 
 type PostVersion = {
   id: string;
