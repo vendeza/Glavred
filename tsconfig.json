@@ -5,6 +5,12 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@stores/*": [
+        "./store/*"
+      ],
+      "@services/*": [
+        "./services/*"
       ]
     }
   },

@@ -9,6 +9,7 @@ import { GoalModal } from '@/components/new/modals/goal-modal';
 import { HistoryModal } from '@/components/new/modals/history-modal';
 import { ReferencesModal } from '@/components/new/modals/references-modal';
 import { ThemedText } from '@/components/themed-text';
+import { useStores } from '@/store/RootStore';
 import { PostCard } from './post-card';
 import { styles } from './styles';
 
@@ -161,7 +162,7 @@ export default function NewScreen() {
   const [referenceText, setReferenceText] = useState<string>('');
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['34%'], []);
-
+const { userStore } = useStores();
   const handleAnalyze = useCallback(() => {
     if (isAnalyzing) {
       return;
@@ -241,6 +242,7 @@ export default function NewScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.page}>
+        <ThemedText>{userStore.name}</ThemedText>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
