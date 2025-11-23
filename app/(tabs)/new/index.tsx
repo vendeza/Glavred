@@ -1,7 +1,7 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { ComponentProps, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
-import { FlatList, ListRenderItemInfo, Modal, Platform, Pressable, ScrollView, TouchableOpacity, View } from 'react-native';
+import { FlatList, ListRenderItemInfo, Modal, Platform, Pressable, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
@@ -44,7 +44,7 @@ const headerActions: HeaderAction[] = [
 
 const quickActions: { label: string; icon: FeatherIconName }[] = [
   { label: 'Fixes', icon: 'edit-3' },
-  { label: 'History', icon: 'clock' },
+  { label: 'Versions', icon: 'clock' },
   { label: 'Goal', icon: 'flag' },
   { label: 'References', icon: 'book-open' },
 ];
@@ -95,6 +95,53 @@ const mockIssues: Issue[] = [
   },
 ];
 
+type PostVersion = {
+  id: string;
+  label: string;
+  content: string;
+};
+
+const mockPostVersions: PostVersion[] = [
+  {
+    id: '1',
+    label: 'Your',
+    content: `Рады приветствовать вас на сайте
+компании «Итком 2000»! Наша компания
+является ведущим провайдером услуг по
+ИТ-интеграции в регионе. Мы работаем
+на рынке интеграционных и
+телекоммуникационных услуг с 2010 года
+и оказываем полный спектр
+телекоммуникационных услуг под ключ!
+За долгие годы работы мы успешно`,
+  },
+  {
+    id: '2',
+    label: 'AI',
+    content: `Рады приветствовать вас на сайте
+компании «Итком 2000»! Наша компания
+является ведущим провайдером услуг по
+ИТ-интеграции в регионе. Мы работаем
+на рынке интеграционных и
+телекоммуникационных услуг с 2010
+года и оказываем полный спектр
+телекоммуникационных услуг`,
+  },
+];
+
+type PostGoal = {
+  id: string;
+  label: string;
+};
+
+const postGoals: PostGoal[] = [
+  { id: 'neutral', label: 'Neutral' },
+  { id: 'comments', label: 'Comments' },
+  { id: 'reposts', label: 'Reposts' },
+  { id: 'subscribes', label: 'Subscribes' },
+  { id: 'likes', label: 'Likes' },
+];
+
 export default function NewScreen() {
   const [post, setPost] = useState(defaultPost);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -103,6 +150,11 @@ export default function NewScreen() {
   );
   const [selectedIssues, setSelectedIssues] = useState<Set<string>>(new Set(['1']));
   const [isFixesModalVisible, setIsFixesModalVisible] = useState(false);
+  const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
+  const [isGoalModalVisible, setIsGoalModalVisible] = useState(false);
+  const [isReferencesModalVisible, setIsReferencesModalVisible] = useState(false);
+  const [selectedGoal, setSelectedGoal] = useState<string>('neutral');
+  const [referenceText, setReferenceText] = useState<string>('');
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['34%'], []);
 
@@ -117,6 +169,44 @@ export default function NewScreen() {
 
   const handleFixesPress = useCallback(() => {
     setIsFixesModalVisible(true);
+  }, []);
+
+  const handleHistoryPress = useCallback(() => {
+    setIsHistoryModalVisible(true);
+  }, []);
+
+  const handleCloseHistory = useCallback(() => {
+    setIsHistoryModalVisible(false);
+  }, []);
+
+  const handleGoalPress = useCallback(() => {
+    setIsGoalModalVisible(true);
+  }, []);
+
+  const handleCloseGoal = useCallback(() => {
+    setIsGoalModalVisible(false);
+  }, []);
+
+  const handleSelectGoal = useCallback((goalId: string) => {
+    setSelectedGoal(goalId);
+  }, []);
+
+  const handleReferencesPress = useCallback(() => {
+    setIsReferencesModalVisible(true);
+  }, []);
+
+  const handleCloseReferences = useCallback(() => {
+    setIsReferencesModalVisible(false);
+  }, []);
+
+  const handleAddReference = useCallback(() => {
+    // TODO: Add reference logic
+    setReferenceText('');
+  }, []);
+
+  const handleApplyReferences = useCallback(() => {
+    // TODO: Apply references logic
+    setIsReferencesModalVisible(false);
   }, []);
 
   const handleIssueToggle = useCallback((issueId: string) => {
@@ -213,6 +303,12 @@ export default function NewScreen() {
                   onPress={() => {
                     if (label === 'Fixes') {
                       handleFixesPress();
+                    } else if (label === 'Versions') {
+                      handleHistoryPress();
+                    } else if (label === 'Goal') {
+                      handleGoalPress();
+                    } else if (label === 'References') {
+                      handleReferencesPress();
                     }
                   }}>
                   <View style={styles.quickActionIcon}>
@@ -279,6 +375,125 @@ export default function NewScreen() {
                 </Pressable>
                 <Pressable style={styles.applyButton} onPress={handleApplyAdvice}>
                   <ThemedText style={styles.applyButtonText}>Apply advice</ThemedText>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          visible={isHistoryModalVisible}
+          animationType="slide"
+          transparent
+          presentationStyle="overFullScreen">
+          <View style={[styles.modalOverlay, Platform.OS === 'web' && styles.modalOverlayWeb]}>
+            <Pressable style={styles.modalBackdrop} onPress={handleCloseHistory} />
+            <View style={[styles.historyModal, Platform.OS === 'web' && styles.historyModalWeb]}>
+              <View style={styles.fixesModalHandle} />
+
+              <View style={styles.historyHeader}>
+                <ThemedText style={styles.historyTitle}>Post versions</ThemedText>
+              </View>
+
+              <FlatList
+                data={mockPostVersions}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <View style={styles.versionCard}>
+                    <View style={styles.versionLabel}>
+                      <ThemedText style={styles.versionLabelText}>{item.label}</ThemedText>
+                    </View>
+                    <ThemedText style={styles.versionContent}>{item.content}</ThemedText>
+                  </View>
+                )}
+                ItemSeparatorComponent={() => <View style={styles.versionDivider} />}
+                style={styles.versionsList}
+                contentContainerStyle={styles.versionsListContent}
+                showsVerticalScrollIndicator
+                bounces
+                nestedScrollEnabled
+                keyboardShouldPersistTaps="handled"
+              />
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          visible={isGoalModalVisible}
+          animationType="slide"
+          transparent
+          presentationStyle="overFullScreen">
+          <View style={[styles.modalOverlay, Platform.OS === 'web' && styles.modalOverlayWeb]}>
+            <Pressable style={styles.modalBackdrop} onPress={handleCloseGoal} />
+            <View style={[styles.goalModal, Platform.OS === 'web' && styles.goalModalWeb]}>
+              <View style={styles.fixesModalHandle} />
+
+              <View style={styles.goalHeader}>
+                <ThemedText style={styles.goalTitle}>Post goal</ThemedText>
+              </View>
+
+              <View style={styles.goalButtonsContainer}>
+                {postGoals.map((goal) => (
+                  <Pressable
+                    key={goal.id}
+                    style={[
+                      styles.goalButton,
+                      selectedGoal === goal.id && styles.goalButtonSelected,
+                    ]}
+                    onPress={() => handleSelectGoal(goal.id)}>
+                    <ThemedText
+                      style={[
+                        styles.goalButtonText,
+                        selectedGoal === goal.id && styles.goalButtonTextSelected,
+                      ]}>
+                      {goal.label}
+                    </ThemedText>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          visible={isReferencesModalVisible}
+          animationType="slide"
+          transparent
+          presentationStyle="overFullScreen">
+          <View style={[styles.modalOverlay, Platform.OS === 'web' && styles.modalOverlayWeb]}>
+            <Pressable style={styles.modalBackdrop} onPress={handleCloseReferences} />
+            <View style={[styles.referencesModal, Platform.OS === 'web' && styles.referencesModalWeb]}>
+              <View style={styles.fixesModalHandle} />
+
+              <View style={styles.referencesHeader}>
+                <ThemedText style={styles.referencesTitle}>References for your post</ThemedText>
+              </View>
+
+              <Pressable style={styles.addScreenshotButton}>
+                <Feather name="image" size={20} color="#6B7280" />
+                <ThemedText style={styles.addScreenshotText}>Add screenshot</ThemedText>
+              </Pressable>
+
+              <View style={styles.referenceInputContainer}>
+                <TextInput
+                  style={styles.referenceInput}
+                  placeholder="Add a reference text"
+                  placeholderTextColor="#9CA3AF"
+                  value={referenceText}
+                  onChangeText={setReferenceText}
+                  multiline
+                />
+                <Pressable style={styles.addReferenceButton} onPress={handleAddReference}>
+                  <ThemedText style={styles.addReferenceButtonText}>Add</ThemedText>
+                </Pressable>
+              </View>
+
+              <View style={styles.referencesButtons}>
+                <Pressable style={styles.cancelButton} onPress={handleCloseReferences}>
+                  <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
+                </Pressable>
+                <Pressable style={styles.applyButton} onPress={handleApplyReferences}>
+                  <ThemedText style={styles.applyButtonText}>Apply</ThemedText>
                 </Pressable>
               </View>
             </View>
