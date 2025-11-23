@@ -1,10 +1,14 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { ComponentProps, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
-import { FlatList, ListRenderItemInfo, Modal, Platform, Pressable, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import { Pressable, ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
+import { FixesModal } from './modals/fixes-modal';
+import { GoalModal } from './modals/goal-modal';
+import { HistoryModal } from './modals/history-modal';
+import { ReferencesModal } from './modals/references-modal';
 import { PostCard } from './post-card';
 import { styles } from './styles';
 
@@ -234,24 +238,6 @@ export default function NewScreen() {
     setIsFixesModalVisible(false);
   }, []);
 
-  const renderIssue = useCallback(
-    ({ item }: ListRenderItemInfo<Issue>) => (
-      <Pressable style={styles.issueItem} onPress={() => handleIssueToggle(item.id)}>
-        <View style={styles.issueCheckbox}>
-          {selectedIssues.has(item.id) && <Feather name="check" size={16} color="#111827" />}
-        </View>
-        <View style={styles.issueContent}>
-          <ThemedText style={styles.issueTitle}>Issue: {item.issue}</ThemedText>
-          <ThemedText style={styles.issueScore}>Score: {item.score}</ThemedText>
-          <ThemedText style={styles.issueAdvice}>Advice: {item.advice}</ThemedText>
-        </View>
-      </Pressable>
-    ),
-    [handleIssueToggle, selectedIssues],
-  );
-
-  const keyExtractor = useCallback((item: Issue) => item.id, []);
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.page}>
@@ -339,166 +325,38 @@ export default function NewScreen() {
           </BottomSheetView>
         </BottomSheet>
 
-        <Modal
+        <FixesModal
           visible={isFixesModalVisible}
-          animationType="slide"
-          transparent
-          presentationStyle="overFullScreen">
-          <View style={[styles.modalOverlay, Platform.OS === 'web' && styles.modalOverlayWeb]}>
-            <Pressable style={styles.modalBackdrop} onPress={handleCloseFixes} />
-            <View style={[styles.fixesModal, Platform.OS === 'web' && styles.fixesModalWeb]}>
-              <View style={styles.fixesModalHandle} />
+          issues={mockIssues}
+          selectedIssues={selectedIssues}
+          onClose={handleCloseFixes}
+          onIssueToggle={handleIssueToggle}
+          onSelectAll={handleSelectAll}
+          onApply={handleApplyAdvice}
+        />
 
-              <View style={styles.fixesHeader}>
-                <View style={styles.fixesHeaderSpacer} />
-                <Pressable onPress={handleSelectAll}>
-                  <ThemedText style={styles.selectAllText}>Select all</ThemedText>
-                </Pressable>
-              </View>
-
-              <FlatList
-                data={mockIssues}
-                keyExtractor={keyExtractor}
-                renderItem={renderIssue}
-                ItemSeparatorComponent={() => <View style={styles.issueDivider} />}
-                style={styles.issuesList}
-                contentContainerStyle={styles.issuesListContent}
-                showsVerticalScrollIndicator
-                bounces
-                nestedScrollEnabled
-                keyboardShouldPersistTaps="handled"
-              />
-
-              <View style={styles.fixesButtons}>
-                <Pressable style={styles.cancelButton} onPress={handleCloseFixes}>
-                  <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
-                </Pressable>
-                <Pressable style={styles.applyButton} onPress={handleApplyAdvice}>
-                  <ThemedText style={styles.applyButtonText}>Apply advice</ThemedText>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </Modal>
-
-        <Modal
+        <HistoryModal
           visible={isHistoryModalVisible}
-          animationType="slide"
-          transparent
-          presentationStyle="overFullScreen">
-          <View style={[styles.modalOverlay, Platform.OS === 'web' && styles.modalOverlayWeb]}>
-            <Pressable style={styles.modalBackdrop} onPress={handleCloseHistory} />
-            <View style={[styles.historyModal, Platform.OS === 'web' && styles.historyModalWeb]}>
-              <View style={styles.fixesModalHandle} />
+          versions={mockPostVersions}
+          onClose={handleCloseHistory}
+        />
 
-              <View style={styles.historyHeader}>
-                <ThemedText style={styles.historyTitle}>Post versions</ThemedText>
-              </View>
-
-              <FlatList
-                data={mockPostVersions}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <View style={styles.versionCard}>
-                    <View style={styles.versionLabel}>
-                      <ThemedText style={styles.versionLabelText}>{item.label}</ThemedText>
-                    </View>
-                    <ThemedText style={styles.versionContent}>{item.content}</ThemedText>
-                  </View>
-                )}
-                ItemSeparatorComponent={() => <View style={styles.versionDivider} />}
-                style={styles.versionsList}
-                contentContainerStyle={styles.versionsListContent}
-                showsVerticalScrollIndicator
-                bounces
-                nestedScrollEnabled
-                keyboardShouldPersistTaps="handled"
-              />
-            </View>
-          </View>
-        </Modal>
-
-        <Modal
+        <GoalModal
           visible={isGoalModalVisible}
-          animationType="slide"
-          transparent
-          presentationStyle="overFullScreen">
-          <View style={[styles.modalOverlay, Platform.OS === 'web' && styles.modalOverlayWeb]}>
-            <Pressable style={styles.modalBackdrop} onPress={handleCloseGoal} />
-            <View style={[styles.goalModal, Platform.OS === 'web' && styles.goalModalWeb]}>
-              <View style={styles.fixesModalHandle} />
+          goals={postGoals}
+          selectedGoal={selectedGoal}
+          onClose={handleCloseGoal}
+          onSelectGoal={handleSelectGoal}
+        />
 
-              <View style={styles.goalHeader}>
-                <ThemedText style={styles.goalTitle}>Post goal</ThemedText>
-              </View>
-
-              <View style={styles.goalButtonsContainer}>
-                {postGoals.map((goal) => (
-                  <Pressable
-                    key={goal.id}
-                    style={[
-                      styles.goalButton,
-                      selectedGoal === goal.id && styles.goalButtonSelected,
-                    ]}
-                    onPress={() => handleSelectGoal(goal.id)}>
-                    <ThemedText
-                      style={[
-                        styles.goalButtonText,
-                        selectedGoal === goal.id && styles.goalButtonTextSelected,
-                      ]}>
-                      {goal.label}
-                    </ThemedText>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-          </View>
-        </Modal>
-
-        <Modal
+        <ReferencesModal
           visible={isReferencesModalVisible}
-          animationType="slide"
-          transparent
-          presentationStyle="overFullScreen">
-          <View style={[styles.modalOverlay, Platform.OS === 'web' && styles.modalOverlayWeb]}>
-            <Pressable style={styles.modalBackdrop} onPress={handleCloseReferences} />
-            <View style={[styles.referencesModal, Platform.OS === 'web' && styles.referencesModalWeb]}>
-              <View style={styles.fixesModalHandle} />
-
-              <View style={styles.referencesHeader}>
-                <ThemedText style={styles.referencesTitle}>References for your post</ThemedText>
-              </View>
-
-              <Pressable style={styles.addScreenshotButton}>
-                <Feather name="image" size={20} color="#6B7280" />
-                <ThemedText style={styles.addScreenshotText}>Add screenshot</ThemedText>
-              </Pressable>
-
-              <View style={styles.referenceInputContainer}>
-                <TextInput
-                  style={styles.referenceInput}
-                  placeholder="Add a reference text"
-                  placeholderTextColor="#9CA3AF"
-                  value={referenceText}
-                  onChangeText={setReferenceText}
-                  multiline
-                />
-                <Pressable style={styles.addReferenceButton} onPress={handleAddReference}>
-                  <ThemedText style={styles.addReferenceButtonText}>Add</ThemedText>
-                </Pressable>
-              </View>
-
-              <View style={styles.referencesButtons}>
-                <Pressable style={styles.cancelButton} onPress={handleCloseReferences}>
-                  <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
-                </Pressable>
-                <Pressable style={styles.applyButton} onPress={handleApplyReferences}>
-                  <ThemedText style={styles.applyButtonText}>Apply</ThemedText>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </Modal>
+          referenceText={referenceText}
+          onClose={handleCloseReferences}
+          onReferenceTextChange={setReferenceText}
+          onAddReference={handleAddReference}
+          onApply={handleApplyReferences}
+        />
       </View>
     </SafeAreaView>
   );
