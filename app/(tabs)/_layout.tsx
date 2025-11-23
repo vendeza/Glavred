@@ -12,9 +12,7 @@ export default function TabLayout() {
   const tint = Colors[colorScheme ?? 'light'].tint;
   const isWeb = Platform.OS === 'web';
   const labelStyle = {
-    fontSize: isWeb ? 14 : 12,
-    lineHeight: isWeb ? 18 : 16,
-    marginTop: isWeb ? 6 : 2,
+    fontSize: isWeb ? 14 : 12,  
     textAlign: 'center' as const,
   };
   const getTabBarLabel =
@@ -29,11 +27,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: tint,
         tabBarInactiveTintColor: colorScheme === 'dark' ? '#8E8E93' : '#8A8A8E',
         tabBarStyle: {
-          height: isWeb ? 84 : 64,
-          paddingBottom: isWeb ? 28 : 12,
-          paddingTop: isWeb ? 12 : 8,
-          backgroundColor: '#fff',
-          borderTopWidth: 0,
+          height: 60
         },
         tabBarItemStyle: {
           paddingBottom: isWeb ? 6 : 0,
