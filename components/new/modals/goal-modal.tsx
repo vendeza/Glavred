@@ -1,7 +1,7 @@
 import { Modal, Platform, Pressable, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { styles } from '@/app/(tabs)/new/styles';
+import { styles } from '@/components/new/styles';
 
 type PostGoal = {
   id: string;

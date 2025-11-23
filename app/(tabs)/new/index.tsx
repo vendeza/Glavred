@@ -8,10 +8,10 @@ import { FixesModal } from '@/components/new/modals/fixes-modal';
 import { GoalModal } from '@/components/new/modals/goal-modal';
 import { HistoryModal } from '@/components/new/modals/history-modal';
 import { ReferencesModal } from '@/components/new/modals/references-modal';
+import { PostCard } from '@/components/new/post-card';
+import { styles } from '@/components/new/styles';
 import { ThemedText } from '@/components/themed-text';
 import { useStores } from '@/store/RootStore';
-import { PostCard } from './post-card';
-import { styles } from './styles';
 
 type FeatherIconName = ComponentProps<typeof Feather>['name'];
 type FontAwesome6IconName = ComponentProps<typeof FontAwesome6>['name'];
@@ -242,7 +242,6 @@ const { userStore } = useStores();
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.page}>
-        <ThemedText>{userStore.name}</ThemedText>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
