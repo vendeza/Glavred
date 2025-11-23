@@ -7,15 +7,14 @@ export const styles = StyleSheet.create({
   },
   page: {
     flex: 1,
-    backgroundColor: '#F5F5F7',
+    backgroundColor: '#fff',
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 260,
+    paddingTop: 16, 
     gap: 16,
     flexGrow: 1,
   },
@@ -54,8 +53,7 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
     gap: 16,
   },
-  fullHeightCard: {
-    flexGrow: 1,
+  fullHeightCard: { 
     alignSelf: 'stretch',
     minHeight: 0,
   },
@@ -72,7 +70,7 @@ export const styles = StyleSheet.create({
   sheetBackground: {
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
-    backgroundColor: '#fff',
+    backgroundColor: '#eee',
   },
   sheetIndicator: {
     width: 40,
@@ -198,36 +196,35 @@ export const styles = StyleSheet.create({
     color: '#0F1419',
     width: '100%',
   },
-  xDivider: {
-    height: 1,
-    backgroundColor: '#F3F4F6',
-  },
   xFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 4,
+  },
+  xEngagementRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    width: '100%',
+    gap: 16,
   },
-  xMetaRow: {
+  xEngagementItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
     flex: 1,
+    gap: 4,
   },
-  xMetaText: {
+  xEngagementValue: {
     fontSize: 13,
     color: '#6B7280',
   },
-  xSeparatorDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#D1D5DB',
-  },
-  xFooterActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
+  postDivider: {
+    height: 1,
+    backgroundColor: '#ccc',
+    width: '100%',
+    alignSelf: 'stretch',
+    marginTop: 0,
   },
 });
 

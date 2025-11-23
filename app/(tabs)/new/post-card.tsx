@@ -70,55 +70,66 @@ export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps)
 
   if (selectedNetwork === 'x') {
     return (
-      <View style={[styles.card, styles.xCard, styles.fullHeightCard]}>
-        <View style={styles.xAvatar} />
+      <>
+        <View style={[styles.card, styles.xCard, styles.fullHeightCard]}>
+          <View style={styles.xAvatar} />
 
-        <View style={styles.xContent}>
-          <View style={styles.xHeader}>
-            <View style={styles.xHeaderText}>
-              <ThemedText style={styles.xUserName}>User Name</ThemedText>
-              <ThemedText style={styles.xUserMeta}>@user_name · 1 d.</ThemedText>
+          <View style={styles.xContent}>
+            <View style={styles.xHeader}>
+              <View style={styles.xHeaderText}>
+                <ThemedText style={styles.xUserName}>User Name</ThemedText>
+                <ThemedText style={styles.xUserMeta}>@user_name · 1 d.</ThemedText>
+              </View>
+
+              <FontAwesome6 name="x-twitter" size={18} color="#0F1419" />
             </View>
 
-            <FontAwesome6 name="x-twitter" size={18} color="#0F1419" />
-          </View>
+            <TextInput
+              multiline
+              value={post}
+              onChangeText={onChangePost}
+              textAlignVertical="top"
+              placeholder="Share what’s new…"
+              placeholderTextColor="#9AA0A6"
+              numberOfLines={lineCount}
+              scrollEnabled={false}
+              onContentSizeChange={handleContentSizeChange}
+              style={[styles.editor, styles.xEditor, { height: computedEditorHeight }]}
+            />
+            <View style={styles.xFooter}>
+              <View style={styles.xEngagementRow}>
+                <View style={styles.xEngagementItem}>
+                  <Feather name="message-circle" size={15} color="#6B7280" />
+                  <ThemedText style={styles.xEngagementValue}>4</ThemedText>
+                </View>
 
-          <TextInput
-            multiline
-            value={post}
-            onChangeText={onChangePost}
-            textAlignVertical="top"
-            placeholder="Share what’s new…"
-            placeholderTextColor="#9AA0A6"
-            numberOfLines={lineCount}
-            scrollEnabled={false}
-            onContentSizeChange={handleContentSizeChange}
-            style={[styles.editor, styles.xEditor, { height: computedEditorHeight }]}
-          />
-          <View style={styles.xDivider} />
-          <View style={styles.xFooter}>
-            <View style={styles.xMetaRow}>
-              <ThemedText style={styles.xMetaText}>513 Likes</ThemedText>
-              <View style={styles.xSeparatorDot} />
-              <ThemedText style={styles.xMetaText}>87 Replies</ThemedText>
-              <View style={styles.xSeparatorDot} />
-              <ThemedText style={styles.xMetaText}>13.2K Views</ThemedText>
-            </View>
+                <View style={styles.xEngagementItem}>
+                  <Feather name="repeat" size={15} color="#6B7280" />
+                  <ThemedText style={styles.xEngagementValue}>2</ThemedText>
+                </View>
 
-            <View style={styles.xFooterActions}>
-              <Feather name="heart" size={16} color="#6B7280" />
-              <Feather name="message-circle" size={16} color="#6B7280" />
-              <Feather name="repeat" size={16} color="#6B7280" />
-              <Feather name="bookmark" size={16} color="#6B7280" />
+                <View style={styles.xEngagementItem}>
+                  <Feather name="heart" size={15} color="#6B7280" />
+                  <ThemedText style={styles.xEngagementValue}>14</ThemedText>
+                </View>
+
+                <View style={styles.xEngagementItem}>
+                  <Feather name="bar-chart-2" size={15} color="#6B7280" />
+                  <ThemedText style={styles.xEngagementValue}>313</ThemedText>
+                </View>
+              </View>
             </View>
-          </View>
+        
+          </View> 
         </View>
-      </View>
+  
+      </>
     );
   }
 
   return (
-    <View style={[styles.card, styles.fullHeightCard]}>
+    <>
+      <View style={[styles.card, styles.fullHeightCard]}>
       <ThemedText style={styles.cardMeta}>Последнее обновление · 2 минуты назад</ThemedText>
 
       <TextInput
@@ -134,6 +145,7 @@ export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps)
         style={[styles.editor, { height: computedEditorHeight }]}
       />
     </View>
+    </>
   );
 }
 
