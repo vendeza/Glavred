@@ -97,6 +97,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     padding: 8,
+    paddingVertical: 0,
     borderRadius: 12,
   },
   quickActionSelected: {
