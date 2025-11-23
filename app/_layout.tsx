@@ -1,5 +1,5 @@
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useMemo } from 'react';
@@ -7,7 +7,6 @@ import { Platform, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { RootStore, RootStoreProvider } from '@stores/RootStore';
 
 export const unstable_settings = {
@@ -15,14 +14,13 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const rootStore = useMemo(() => new RootStore(), []);
 
   return (
     <RootStoreProvider value={rootStore}>
       <GestureHandlerRootView style={styles.root}>
         <BottomSheetModalProvider>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <ThemeProvider value={DefaultTheme}>
             <View style={styles.shell}>
               <View style={[styles.content, Platform.OS === 'web' && styles.contentWeb]}>
                 <Stack>

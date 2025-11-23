@@ -5,11 +5,9 @@ import { Platform, Text } from 'react-native';
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  const tint = Colors[colorScheme ?? 'light'].tint;
+  const tint = Colors.light.tint;
   const isWeb = Platform.OS === 'web';
   const labelStyle = {
     fontSize: isWeb ? 14 : 12,  
@@ -25,7 +23,7 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: tint,
-        tabBarInactiveTintColor: colorScheme === 'dark' ? '#8E8E93' : '#8A8A8E',
+        tabBarInactiveTintColor: '#8A8A8E',
         tabBarStyle: {
           height: 60
         },
