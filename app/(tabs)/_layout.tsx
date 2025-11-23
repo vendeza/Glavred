@@ -20,6 +20,7 @@ export default function TabLayout() {
           height: 64,
           paddingBottom: 12,
           paddingTop: 8,
+          backgroundColor: '#fff',
         },
         tabBarButton: HapticTab,
       }}>

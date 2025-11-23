@@ -8,13 +8,13 @@ export const styles = StyleSheet.create({
   page: {
     flex: 1,
     backgroundColor: '#fff',    
-    paddingTop:30
+    paddingTop:0
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 24,
+    paddingHorizontal: 16,
     paddingTop: 16, 
     gap: 16,
     flexGrow: 1,
