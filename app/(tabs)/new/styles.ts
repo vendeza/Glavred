@@ -196,8 +196,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 0,
     paddingVertical: 0,
     color: '#0F1419',
-    flex: 1,
-    minHeight: 0,
+    width: '100%',
   },
   xDivider: {
     height: 1,

@@ -1,5 +1,5 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import {
     NativeSyntheticEvent,
     TextInput,
@@ -18,31 +18,55 @@ type PostCardProps = {
 };
 
 const MIN_EDITOR_HEIGHT = 220;
+const LINE_HEIGHT = 24;
+const MIN_EDITOR_LINES = Math.ceil(MIN_EDITOR_HEIGHT / LINE_HEIGHT);
 
-const useAutoGrowingHeight = () => {
+const useAutoGrowingHeight = (value: string) => {
   const [editorHeight, setEditorHeight] = useState(MIN_EDITOR_HEIGHT);
+  const [lineCount, setLineCount] = useState(MIN_EDITOR_LINES);
 
   const handleContentSizeChange = useCallback(
     (event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
-      const nextHeight = event.nativeEvent.contentSize.height;
+      const measuredHeight = Math.max(event.nativeEvent.contentSize.height, MIN_EDITOR_HEIGHT);
+      const measuredLines = Math.max(Math.round(measuredHeight / LINE_HEIGHT), MIN_EDITOR_LINES);
+
       setEditorHeight(prev => {
-        if (Math.abs(prev - nextHeight) < 1) {
+        if (Math.abs(prev - measuredHeight) < 1) {
           return prev;
         }
-        return Math.max(nextHeight, MIN_EDITOR_HEIGHT);
+        return measuredHeight;
       });
+      setLineCount(prev => Math.max(prev, measuredLines));
     },
     [],
   );
 
+  useEffect(() => {
+    if (value.length === 0) {
+      setEditorHeight(MIN_EDITOR_HEIGHT);
+      setLineCount(MIN_EDITOR_LINES);
+      return;
+    }
+
+    const explicitLines = Math.max(value.split('\n').length || 1, MIN_EDITOR_LINES);
+    setLineCount(prev => {
+      if (explicitLines < prev) {
+        setEditorHeight(Math.max(explicitLines * LINE_HEIGHT, MIN_EDITOR_HEIGHT));
+        return explicitLines;
+      }
+      return prev;
+    });
+  }, [value]);
+
   return {
     computedEditorHeight: Math.max(editorHeight, MIN_EDITOR_HEIGHT),
+    lineCount,
     handleContentSizeChange,
   };
 };
 
 export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps) {
-  const { computedEditorHeight, handleContentSizeChange } = useAutoGrowingHeight();
+  const { computedEditorHeight, lineCount, handleContentSizeChange } = useAutoGrowingHeight(post);
 
   if (selectedNetwork === 'x') {
     return (
@@ -66,13 +90,12 @@ export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps)
             textAlignVertical="top"
             placeholder="Share what’s new…"
             placeholderTextColor="#9AA0A6"
+            numberOfLines={lineCount}
             scrollEnabled={false}
             onContentSizeChange={handleContentSizeChange}
-            style={[styles.editor, styles.xEditor, { minHeight: computedEditorHeight }]}
+            style={[styles.editor, styles.xEditor, { height: computedEditorHeight }]}
           />
-
           <View style={styles.xDivider} />
-
           <View style={styles.xFooter}>
             <View style={styles.xMetaRow}>
               <ThemedText style={styles.xMetaText}>513 Likes</ThemedText>
@@ -105,9 +128,10 @@ export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps)
         textAlignVertical="top"
         placeholder="Вставьте текст или заметку…"
         placeholderTextColor="#A3A6AF"
+        numberOfLines={lineCount}
         scrollEnabled={false}
         onContentSizeChange={handleContentSizeChange}
-        style={[styles.editor, { minHeight: computedEditorHeight }]}
+        style={[styles.editor, { height: computedEditorHeight }]}
       />
     </View>
   );
