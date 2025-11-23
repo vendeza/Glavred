@@ -71,7 +71,12 @@ export const styles = StyleSheet.create({
   sheetBackground: {
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
-    backgroundColor: '#eee',
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 12,
   },
   sheetIndicator: {
     width: 40,
