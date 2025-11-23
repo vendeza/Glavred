@@ -74,15 +74,16 @@ const useAutoGrowingHeight = (value: string) => {
 export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps) {
   const { computedEditorHeight, lineCount, handleContentSizeChange } = useAutoGrowingHeight(post);
 
-  if (selectedNetwork === 'x' || selectedNetwork === 'threads') {
+  if (selectedNetwork === 'x' || selectedNetwork === 'threads' || selectedNetwork === 'doc') {
     const isThreads = selectedNetwork === 'threads';
+    const isDoc = selectedNetwork === 'doc';
 
     return (
-      <>
-        <View style={[styles.card, styles.xCard, styles.fullHeightCard]}>
-          <View style={styles.xAvatar} />
+      <View style={[styles.card, styles.xCard, styles.fullHeightCard]}>
+        {!isDoc && <View style={styles.xAvatar} />}
 
-          <View style={styles.xContent}>
+        <View style={styles.xContent}>
+          {!isDoc && (
             <View style={styles.xHeader}>
               <View style={styles.xHeaderText}>
                 <ThemedText style={styles.xUserName}>User Name</ThemedText>
@@ -93,19 +94,22 @@ export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps)
 
               {!isThreads && <FontAwesome6 name="x-twitter" size={18} color="#0F1419" />}
             </View>
+          )}
 
-            <TextInput
-              multiline
-              value={post}
-              onChangeText={onChangePost}
-              textAlignVertical="top"
-              placeholder="Share what’s new…"
-              placeholderTextColor="#9AA0A6"
-              numberOfLines={lineCount}
-              scrollEnabled={false}
-              onContentSizeChange={handleContentSizeChange}
-              style={[styles.editor, styles.xEditor, { height: computedEditorHeight }]}
-            />
+          <TextInput
+            multiline
+            value={post}
+            onChangeText={onChangePost}
+            textAlignVertical="top"
+            placeholder={isDoc ? 'Вставьте текст или заметку…' : 'Share what’s new…'}
+            placeholderTextColor={isDoc ? '#A3A6AF' : '#9AA0A6'}
+            numberOfLines={lineCount}
+            scrollEnabled={false}
+            onContentSizeChange={handleContentSizeChange}
+            style={[styles.editor, styles.xEditor, { height: computedEditorHeight }]}
+          />
+
+          {!isDoc && (
             <View style={styles.xFooter}>
               <View style={isThreads ? styles.threadsEngagementRow : styles.xEngagementRow}>
                 {engagementStats.map(({ icon, value }) => (
@@ -118,31 +122,12 @@ export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps)
                 ))}
               </View>
             </View>
-          </View>
+          )}
         </View>
-      </>
+      </View>
     );
   }
 
-  return (
-    <>
-      <View style={[styles.card, styles.fullHeightCard]}>
-      <ThemedText style={styles.cardMeta}>Последнее обновление · 2 минуты назад</ThemedText>
-
-      <TextInput
-        multiline
-        value={post}
-        onChangeText={onChangePost}
-        textAlignVertical="top"
-        placeholder="Вставьте текст или заметку…"
-        placeholderTextColor="#A3A6AF"
-        numberOfLines={lineCount}
-        scrollEnabled={false}
-        onContentSizeChange={handleContentSizeChange}
-        style={[styles.editor, { height: computedEditorHeight }]}
-      />
-    </View>
-    </>
-  );
+  return null;
 }
 
