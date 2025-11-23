@@ -95,13 +95,18 @@ export const styles = StyleSheet.create({
   },
   quickAction: {
     alignItems: 'center',
-    gap: 8,
+    gap: 4,
+    padding: 8,
+    borderRadius: 12,
+  },
+  quickActionSelected: {
+    borderWidth: 1,
+    borderColor: '#111827',
+    backgroundColor: '#F9FAFB',
   },
   quickActionIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    backgroundColor: '#F3F4F6',
+    width: 18,
+    height: 18,
     alignItems: 'center',
     justifyContent: 'center',
   },

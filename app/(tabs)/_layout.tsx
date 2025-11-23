@@ -24,8 +24,7 @@ export default function TabLayout() {
         tabBarButton: HapticTab,
       }}>
       <Tabs.Screen name="index" options={{ href: null }} />
-      <Tabs.Screen name="analize" options={{ href: null }} />
-      <Tabs.Screen name="preview" options={{ href: null }} />
+
       <Tabs.Screen
         name="history"
         options={{
@@ -34,7 +33,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="new"
+        name="new/index"
         options={{
           title: 'New',
           tabBarIcon: ({ color }) => (

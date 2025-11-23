@@ -1,7 +1,7 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { ComponentProps, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
-import { FlatList, ListRenderItemInfo, Modal, Platform, Pressable, ScrollView, View } from 'react-native';
+import { FlatList, ListRenderItemInfo, Modal, Platform, Pressable, ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
@@ -206,15 +206,20 @@ export default function NewScreen() {
           <BottomSheetView style={styles.sheetContent}>
             <View style={styles.quickActionsRow}>
               {quickActions.map(({ label, icon }) => (
-                <Pressable
+                <TouchableOpacity
                   key={label}
                   style={styles.quickAction}
-                  onPress={label === 'Fixes' ? handleFixesPress : undefined}>
+                  activeOpacity={0.6}
+                  onPress={() => {
+                    if (label === 'Fixes') {
+                      handleFixesPress();
+                    }
+                  }}>
                   <View style={styles.quickActionIcon}>
                     <Feather name={icon} size={18} color="#0F172A" />
                   </View>
                   <ThemedText style={styles.quickActionLabel}>{label}</ThemedText>
-                </Pressable>
+                </TouchableOpacity>
               ))}
             </View>
 
