@@ -3,11 +3,12 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F5F5F7',
+    backgroundColor: '#F5F5F7', 
   },
   page: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff',    
+    paddingTop:30
   },
   scrollView: {
     flex: 1,
@@ -218,6 +219,19 @@ export const styles = StyleSheet.create({
   xEngagementValue: {
     fontSize: 13,
     color: '#6B7280',
+  },
+  threadsEngagementRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    gap: 16,
+    alignSelf: 'flex-start',
+  },
+  threadsEngagementItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    gap: 4,
   },
   postDivider: {
     height: 1,

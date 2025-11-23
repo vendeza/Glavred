@@ -20,6 +20,12 @@ type PostCardProps = {
 const MIN_EDITOR_HEIGHT = 50;
 const LINE_HEIGHT = 24;
 const MIN_EDITOR_LINES = Math.ceil(MIN_EDITOR_HEIGHT / LINE_HEIGHT);
+const engagementStats = [
+  { icon: 'message-circle', value: '4' },
+  { icon: 'repeat', value: '2' },
+  { icon: 'heart', value: '14' },
+  { icon: 'bar-chart-2', value: '313' },
+] as const;
 
 const useAutoGrowingHeight = (value: string) => {
   const [editorHeight, setEditorHeight] = useState(MIN_EDITOR_HEIGHT);
@@ -68,7 +74,9 @@ const useAutoGrowingHeight = (value: string) => {
 export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps) {
   const { computedEditorHeight, lineCount, handleContentSizeChange } = useAutoGrowingHeight(post);
 
-  if (selectedNetwork === 'x') {
+  if (selectedNetwork === 'x' || selectedNetwork === 'threads') {
+    const isThreads = selectedNetwork === 'threads';
+
     return (
       <>
         <View style={[styles.card, styles.xCard, styles.fullHeightCard]}>
@@ -78,10 +86,12 @@ export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps)
             <View style={styles.xHeader}>
               <View style={styles.xHeaderText}>
                 <ThemedText style={styles.xUserName}>User Name</ThemedText>
-                <ThemedText style={styles.xUserMeta}>@user_name · 1 d.</ThemedText>
+                {!isThreads && (
+                  <ThemedText style={styles.xUserMeta}>@user_name · 1 d.</ThemedText>
+                )}
               </View>
 
-              <FontAwesome6 name="x-twitter" size={18} color="#0F1419" />
+              {!isThreads && <FontAwesome6 name="x-twitter" size={18} color="#0F1419" />}
             </View>
 
             <TextInput
@@ -97,32 +107,19 @@ export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps)
               style={[styles.editor, styles.xEditor, { height: computedEditorHeight }]}
             />
             <View style={styles.xFooter}>
-              <View style={styles.xEngagementRow}>
-                <View style={styles.xEngagementItem}>
-                  <Feather name="message-circle" size={15} color="#6B7280" />
-                  <ThemedText style={styles.xEngagementValue}>4</ThemedText>
-                </View>
-
-                <View style={styles.xEngagementItem}>
-                  <Feather name="repeat" size={15} color="#6B7280" />
-                  <ThemedText style={styles.xEngagementValue}>2</ThemedText>
-                </View>
-
-                <View style={styles.xEngagementItem}>
-                  <Feather name="heart" size={15} color="#6B7280" />
-                  <ThemedText style={styles.xEngagementValue}>14</ThemedText>
-                </View>
-
-                <View style={styles.xEngagementItem}>
-                  <Feather name="bar-chart-2" size={15} color="#6B7280" />
-                  <ThemedText style={styles.xEngagementValue}>313</ThemedText>
-                </View>
+              <View style={isThreads ? styles.threadsEngagementRow : styles.xEngagementRow}>
+                {engagementStats.map(({ icon, value }) => (
+                  <View
+                    key={icon}
+                    style={isThreads ? styles.threadsEngagementItem : styles.xEngagementItem}>
+                    <Feather name={icon} size={15} color="#6B7280" />
+                    <ThemedText style={styles.xEngagementValue}>{value}</ThemedText>
+                  </View>
+                ))}
               </View>
             </View>
-        
-          </View> 
+          </View>
         </View>
-  
       </>
     );
   }
