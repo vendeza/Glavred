@@ -66,7 +66,7 @@ export const styles = StyleSheet.create({
   editor: {
     fontSize: 16,
     lineHeight: 24,
-    minHeight: 220,
+    minHeight: 50,
     flex: 0,
   },
   sheetBackground: {

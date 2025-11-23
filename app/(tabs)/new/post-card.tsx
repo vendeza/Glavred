@@ -17,7 +17,7 @@ type PostCardProps = {
   selectedNetwork: string;
 };
 
-const MIN_EDITOR_HEIGHT = 220;
+const MIN_EDITOR_HEIGHT = 50;
 const LINE_HEIGHT = 24;
 const MIN_EDITOR_LINES = Math.ceil(MIN_EDITOR_HEIGHT / LINE_HEIGHT);
 
