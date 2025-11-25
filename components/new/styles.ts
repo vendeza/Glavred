@@ -310,6 +310,12 @@ export const styles = StyleSheet.create({
     paddingBottom: 16,
     flexGrow: 1,
   },
+  issuesListEmpty: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+  },
   issueItem: {
     flexDirection: 'row',
     gap: 12,
@@ -347,6 +353,20 @@ export const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#E5E7EB',
     marginLeft: 36,
+  },
+  emptyState: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  emptyStateDescription: {
+    fontSize: 14,
+    color: '#6B7280',
+    textAlign: 'center',
   },
   fixesButtons: {
     flexDirection: 'row',

@@ -1,6 +1,7 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { ComponentProps, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import { observer } from 'mobx-react-lite';
+import { ComponentProps, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -54,52 +55,6 @@ const quickActions: { label: string; icon: FeatherIconName }[] = [
   { label: 'References', icon: 'book-open' },
 ];
 
-type Issue = {
-  id: string;
-  issue: string;
-  score: string;
-  advice: string;
-};
-
-const mockIssues: Issue[] = [
-  {
-    id: '1',
-    issue: "First sentence doesn't hook",
-    score: '10/100',
-    advice: 'Add a question or bold statement to create a hook',
-  },
-  {
-    id: '2',
-    issue: "First sentence doesn't hook",
-    score: '10/100',
-    advice: 'Add a question or bold statement to create a hook',
-  },
-  {
-    id: '3',
-    issue: "First sentence doesn't hook",
-    score: '10/100',
-    advice: 'Add a question or bold statement to create a hook',
-  },
-  {
-    id: '4',
-    issue: "First sentence doesn't hook",
-    score: '10/100',
-    advice: 'Add a question or bold statement to create a hook',
-  },
-  {
-    id: '5',
-    issue: "First sentence doesn't hook",
-    score: '10/100',
-    advice: 'Add a question or bold statement to create a hook',
-  },
-  {
-    id: '6',
-    issue: "First sentence doesn't hook",
-    score: '10/100',
-    advice: 'Add a question or bold statement to create a hook',
-  },
-];
-
 type PostVersion = {
   id: string;
   label: string;
@@ -147,13 +102,12 @@ const postGoals: PostGoal[] = [
   { id: 'likes', label: 'Likes' },
 ];
 
-export default function NewScreen() {
+function NewScreen() {
   const [post, setPost] = useState(defaultPost);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState<HeaderAction['key']>(
     headerActions[0].key,
   );
-  const [selectedIssues, setSelectedIssues] = useState<Set<string>>(new Set(['1']));
+  const [selectedIssues, setSelectedIssues] = useState<Set<string>>(new Set());
   const [isFixesModalVisible, setIsFixesModalVisible] = useState(false);
   const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
   const [isGoalModalVisible, setIsGoalModalVisible] = useState(false);
@@ -162,15 +116,30 @@ export default function NewScreen() {
   const [referenceText, setReferenceText] = useState<string>('');
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['34%'], []);
-const { userStore } = useStores();
-  const handleAnalyze = useCallback(() => {
-    if (isAnalyzing) {
+  const { socialPostStore } = useStores();
+  const issues = socialPostStore.evaluation?.issues ?? [];
+  const isAnalyzing = socialPostStore.isAnalyzing;
+
+  useEffect(() => {
+    if (issues.length) {
+      setSelectedIssues(new Set(issues.map(issue => issue.id)));
+    } else {
+      setSelectedIssues(new Set());
+    }
+  }, [socialPostStore.evaluation]);
+
+  const handleAnalyze = useCallback(async () => {
+    if (socialPostStore.isAnalyzing) {
       return;
     }
 
-    setIsAnalyzing(true);
-    setTimeout(() => setIsAnalyzing(false), 1200);
-  }, [isAnalyzing]);
+    try {
+      socialPostStore.updateInput({ post });
+      await socialPostStore.analyzePost({ post });
+    } catch (error) {
+      console.error('Failed to analyze post', error);
+    }
+  }, [post, socialPostStore]);
 
   const handleFixesPress = useCallback(() => {
     setIsFixesModalVisible(true);
@@ -227,8 +196,8 @@ const { userStore } = useStores();
   }, []);
 
   const handleSelectAll = useCallback(() => {
-    setSelectedIssues(new Set(mockIssues.map(issue => issue.id)));
-  }, []);
+    setSelectedIssues(new Set(issues.map(issue => issue.id)));
+  }, [issues]);
 
   const handleCloseFixes = useCallback(() => {
     setIsFixesModalVisible(false);
@@ -328,7 +297,7 @@ const { userStore } = useStores();
 
         <FixesModal
           visible={isFixesModalVisible}
-          issues={mockIssues}
+          issues={issues}
           selectedIssues={selectedIssues}
           onClose={handleCloseFixes}
           onIssueToggle={handleIssueToggle}
@@ -362,5 +331,7 @@ const { userStore } = useStores();
     </SafeAreaView>
   );
 }
+
+export default observer(NewScreen);
 
 

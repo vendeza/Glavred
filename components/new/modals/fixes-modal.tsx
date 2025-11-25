@@ -3,17 +3,11 @@ import { ListRenderItemInfo, Modal, Platform, Pressable, View, FlatList } from '
 
 import { ThemedText } from '@/components/themed-text';
 import { styles } from '@/components/new/styles';
-
-type Issue = {
-  id: string;
-  issue: string;
-  score: string;
-  advice: string;
-};
+import { IssueBlock } from '@services/SocialPostService';
 
 type FixesModalProps = {
   visible: boolean;
-  issues: Issue[];
+  issues: IssueBlock[];
   selectedIssues: Set<string>;
   onClose: () => void;
   onIssueToggle: (issueId: string) => void;
@@ -30,20 +24,30 @@ export function FixesModal({
   onSelectAll,
   onApply,
 }: FixesModalProps) {
-  const renderIssue = ({ item }: ListRenderItemInfo<Issue>) => (
+  const renderIssue = ({ item }: ListRenderItemInfo<IssueBlock>) => (
     <Pressable style={styles.issueItem} onPress={() => onIssueToggle(item.id)}>
       <View style={styles.issueCheckbox}>
         {selectedIssues.has(item.id) && <Feather name="check" size={16} color="#111827" />}
       </View>
       <View style={styles.issueContent}>
-        <ThemedText style={styles.issueTitle}>Issue: {item.issue}</ThemedText>
-        <ThemedText style={styles.issueScore}>Score: {item.score}</ThemedText>
-        <ThemedText style={styles.issueAdvice}>Advice: {item.advice}</ThemedText>
+        <ThemedText style={styles.issueTitle}>{item.title}</ThemedText>
+        <ThemedText style={styles.issueScore}>
+          Impact: {Math.round(item.score_impact)} · Priority: {item.priority ?? 'medium'}
+        </ThemedText>
+        {item.description ? (
+          <ThemedText style={styles.issueAdvice}>{item.description}</ThemedText>
+        ) : null}
+        {item.advice ? (
+          <ThemedText style={styles.issueAdvice}>Advice: {item.advice}</ThemedText>
+        ) : null}
+        {item.suggested_fix ? (
+          <ThemedText style={styles.issueAdvice}>Fix: {item.suggested_fix}</ThemedText>
+        ) : null}
       </View>
     </Pressable>
   );
 
-  const keyExtractor = (item: Issue) => item.id;
+  const keyExtractor = (item: IssueBlock) => item.id;
 
   return (
     <Modal
@@ -69,7 +73,17 @@ export function FixesModal({
             renderItem={renderIssue}
             ItemSeparatorComponent={() => <View style={styles.issueDivider} />}
             style={styles.issuesList}
-            contentContainerStyle={styles.issuesListContent}
+            contentContainerStyle={
+              issues.length === 0 ? styles.issuesListEmpty : styles.issuesListContent
+            }
+            ListEmptyComponent={
+              <View style={styles.emptyState}>
+                <ThemedText style={styles.emptyStateTitle}>No issues yet</ThemedText>
+                <ThemedText style={styles.emptyStateDescription}>
+                  Run Analyze to see personalized fixes for your post.
+                </ThemedText>
+              </View>
+            }
             showsVerticalScrollIndicator
             bounces
             nestedScrollEnabled

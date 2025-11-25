@@ -1,4 +1,5 @@
-import functions, { FirebaseFunctionsTypes } from '@react-native-firebase/functions';
+import type { FirebaseFunctionsTypes } from '@react-native-firebase/functions';
+import { Platform } from 'react-native';
 
 export type SocialPostAnalyzerInput = {
   post: string;
@@ -95,21 +96,40 @@ export type AnalyzePostOptions = {
 export class SocialPostService {
   private static readonly FUNCTION_NAME = 'buildSocialPostEvaluationPrompt';
   private static readonly APPLY_FUNCTION_NAME = 'applyPostChanges';
+  private static nativeFunctionsInstance: FirebaseFunctionsTypes.Module | null = null;
 
-  static async analyzePost(
-    payload: SocialPostAnalyzerInput,
+  private static async getNativeFunctions() {
+    if (Platform.OS === 'web') {
+      throw new Error('Native Firebase Functions module is unavailable on web.');
+    }
+
+    if (!SocialPostService.nativeFunctionsInstance) {
+      const { default: functions } = await import('@react-native-firebase/functions');
+      SocialPostService.nativeFunctionsInstance = functions();
+    }
+
+    return SocialPostService.nativeFunctionsInstance;
+  }
+
+  private static async callCallable<Request, Response>(
+    functionName: string,
+    payload: Request,
     options?: AnalyzePostOptions,
-  ): Promise<AnalyzeSocialPostResponse> {
-    const functionsInstance = functions();
-    const callOptions: FirebaseFunctionsTypes.HttpsCallableOptions | undefined =
-      options?.timeoutMs !== undefined ? { timeout: options.timeoutMs } : undefined;
+  ): Promise<Response> {
+    const callOptions = options?.timeoutMs !== undefined ? { timeout: options.timeoutMs } : undefined;
 
-    try {
-      const callable = functionsInstance.httpsCallable<
-        SocialPostAnalyzerInput,
-        AnalyzeSocialPostResponse
-      >(SocialPostService.FUNCTION_NAME, callOptions);
+    if (Platform.OS === 'web') {
+      const [{ getFirebaseWebFunctions }, firebaseWebFunctions] = await Promise.all([
+        import('@/configs/firebaseWeb'),
+        import('firebase/functions'),
+      ]);
 
+      const functionsInstance = getFirebaseWebFunctions();
+      const callable = firebaseWebFunctions.httpsCallable<Request, Response>(
+        functionsInstance,
+        functionName,
+        callOptions,
+      );
       const { data } = await callable(payload);
 
       if (!data) {
@@ -117,6 +137,28 @@ export class SocialPostService {
       }
 
       return data;
+    }
+
+    const functionsInstance = await SocialPostService.getNativeFunctions();
+    const callable = functionsInstance.httpsCallable<Request, Response>(functionName, callOptions);
+    const { data } = await callable(payload);
+
+    if (!data) {
+      throw new Error('Firebase function returned an empty response');
+    }
+
+    return data;
+  }
+
+  static async analyzePost(
+    payload: SocialPostAnalyzerInput,
+    options?: AnalyzePostOptions,
+  ): Promise<AnalyzeSocialPostResponse> {
+    try {
+      return await SocialPostService.callCallable<
+        SocialPostAnalyzerInput,
+        AnalyzeSocialPostResponse
+      >(SocialPostService.FUNCTION_NAME, payload, options);
     } catch (error) {
       console.error('[SocialPostService] analyzePost failed', error);
       throw error;
@@ -135,23 +177,12 @@ export class SocialPostService {
       throw new Error('At least one change instruction is required');
     }
 
-    const functionsInstance = functions();
-    const callOptions: FirebaseFunctionsTypes.HttpsCallableOptions | undefined =
-      options?.timeoutMs !== undefined ? { timeout: options.timeoutMs } : undefined;
-
     try {
-      const callable = functionsInstance.httpsCallable<
-        ApplyPostChangesInput,
-        ApplyPostChangesResponse
-      >(SocialPostService.APPLY_FUNCTION_NAME, callOptions);
-
-      const { data } = await callable(payload);
-
-      if (!data) {
-        throw new Error('Firebase function returned an empty response');
-      }
-
-      return data;
+      return await SocialPostService.callCallable<ApplyPostChangesInput, ApplyPostChangesResponse>(
+        SocialPostService.APPLY_FUNCTION_NAME,
+        payload,
+        options,
+      );
     } catch (error) {
       console.error('[SocialPostService] applyPostChanges failed', error);
       throw error;
