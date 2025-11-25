@@ -1,13 +1,16 @@
 import { createContext, useContext } from 'react';
 import { UserStore } from './UserStore';
+import { SocialPostStore } from './SocialPostStore';
  
 
 export class RootStore { 
   userStore: UserStore;
+  socialPostStore: SocialPostStore;
  
 
   constructor() { 
     this.userStore = new UserStore(this); 
+    this.socialPostStore = new SocialPostStore();
   }
 }
 
