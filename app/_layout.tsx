@@ -9,6 +9,15 @@ import 'react-native-reanimated';
 
 import { RootStore, RootStoreProvider } from '@stores/RootStore';
 
+// Initialize Firebase config based on platform
+if (Platform.OS === 'web') {
+  // Web platform: pre-initialize Firebase web app
+  require('@/configs/firebaseWeb').getFirebaseWebApp();
+} else {
+  // Native platforms: initialize React Native Firebase
+  require('@/configs/firebase.config');
+}
+
 export const unstable_settings = {
   anchor: '(tabs)',
 };
