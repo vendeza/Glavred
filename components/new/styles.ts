@@ -67,6 +67,7 @@ export const styles = StyleSheet.create({
     lineHeight: 24,
     minHeight: 50,
     flex: 0,
+    borderWidth: 0,
   },
   sheetBackground: {
     borderTopLeftRadius: 32,
@@ -209,6 +210,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 0,
     color: '#0F1419',
     width: '100%',
+    borderWidth: 0,
   },
   xFooter: {
     flexDirection: 'row',
@@ -400,7 +402,7 @@ export const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   goalModal: {
-    height: '40%',
+    height: '50%',
     backgroundColor: '#fff',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
@@ -452,7 +454,7 @@ export const styles = StyleSheet.create({
     color: '#fff',
   },
   referencesModal: {
-    height: '60%',
+    height: '80%',
     backgroundColor: '#fff',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,

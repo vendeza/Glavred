@@ -3,6 +3,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import {
   NativeSyntheticEvent,
+  Platform,
   Pressable,
   TextInput,
   TextInputContentSizeChangeEventData,
@@ -114,7 +115,14 @@ export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps)
             numberOfLines={lineCount}
             scrollEnabled={false}
             onContentSizeChange={handleContentSizeChange}
-            style={[styles.editor, styles.xEditor, { height: computedEditorHeight }]}
+            style={[
+              styles.editor,
+              styles.xEditor,
+              { height: computedEditorHeight },
+              Platform.OS === 'web' && { outline: 'none' },
+            ]}
+            showSoftInputOnFocus
+            blurOnSubmit={false}
           />
 
           {!isDoc && (
