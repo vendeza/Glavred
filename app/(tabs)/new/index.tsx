@@ -5,9 +5,8 @@ import { Pressable, ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { FixesModal } from '@/components/new/modals/fixes-modal';
-import { GoalModal } from '@/components/new/modals/goal-modal';
 import { HistoryModal } from '@/components/new/modals/history-modal';
-import { ReferencesModal } from '@/components/new/modals/references-modal';
+import { TuneModal } from '@/components/new/modals/tune-modal';
 import { PostCard } from '@/components/new/post-card';
 import { styles } from '@/components/new/styles';
 import { ThemedText } from '@/components/themed-text';
@@ -54,21 +53,7 @@ const headerActions: HeaderAction[] = [
 const quickActions: { label: string; icon: FeatherIconName }[] = [
   { label: 'Fixes', icon: 'edit-3' },
   { label: 'Versions', icon: 'clock' },
-  { label: 'Goal', icon: 'flag' },
-  { label: 'References', icon: 'book-open' },
-];
-
-type PostGoal = {
-  id: string;
-  label: string;
-};
-
-const postGoals: PostGoal[] = [
-  { id: 'neutral', label: 'Neutral' },
-  { id: 'comments', label: 'Comments' },
-  { id: 'reposts', label: 'Reposts' },
-  { id: 'subscribes', label: 'Subscribes' },
-  { id: 'likes', label: 'Likes' },
+  { label: 'Tune', icon: 'settings' },
 ];
 
 function NewScreen() {
@@ -79,10 +64,13 @@ function NewScreen() {
   const [selectedIssues, setSelectedIssues] = useState<Set<string>>(new Set());
   const [isFixesModalVisible, setIsFixesModalVisible] = useState(false);
   const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
-  const [isGoalModalVisible, setIsGoalModalVisible] = useState(false);
-  const [isReferencesModalVisible, setIsReferencesModalVisible] = useState(false);
+  const [isTuneModalVisible, setIsTuneModalVisible] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState<string>('neutral');
-  const [referenceText, setReferenceText] = useState<string>('');
+  const [selectedTargetAudience, setSelectedTargetAudience] = useState<string>('');
+  const [selectedTone, setSelectedTone] = useState<string>('');
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('');
+  const [selectedPostType, setSelectedPostType] = useState<string>('');
+  const [selectedBrandPersona, setSelectedBrandPersona] = useState<string>('');
   const { socialPostStore } = useStores();
   const issues = socialPostStore.evaluation?.issues ?? [];
   const isAnalyzing = socialPostStore.isAnalyzing;
@@ -120,41 +108,64 @@ function NewScreen() {
     setIsHistoryModalVisible(false);
   }, []);
 
-  const handleGoalPress = useCallback(() => {
-    setIsGoalModalVisible(true);
+  const handleTunePress = useCallback(() => {
+    setIsTuneModalVisible(true);
   }, []);
 
-  const handleCloseGoal = useCallback(() => {
-    setIsGoalModalVisible(false);
+  const handleCloseTune = useCallback(() => {
+    setIsTuneModalVisible(false);
+  }, []);
+
+  const handleSelectPlatform = useCallback((platformId: string) => {
+    setSelectedNetwork(platformId);
   }, []);
 
   const handleSelectGoal = useCallback((goalId: string) => {
     setSelectedGoal(goalId);
   }, []);
 
-  const handleApplyGoal = useCallback(() => {
-    // Сохраняем цель в стор
-    socialPostStore.updateInput({ goal: selectedGoal });
-    setIsGoalModalVisible(false);
-  }, [selectedGoal, socialPostStore]);
-
-  const handleReferencesPress = useCallback(() => {
-    setIsReferencesModalVisible(true);
+  const handleSelectTargetAudience = useCallback((value: string) => {
+    setSelectedTargetAudience(value);
   }, []);
 
-  const handleCloseReferences = useCallback(() => {
-    setIsReferencesModalVisible(false);
+  const handleSelectTone = useCallback((value: string) => {
+    setSelectedTone(value);
   }, []);
 
-  const handleAddReference = useCallback(() => {
-    // TODO: Add reference logic
-    setReferenceText('');
+  const handleSelectLanguage = useCallback((value: string) => {
+    setSelectedLanguage(value);
   }, []);
 
-  const handleApplyReferences = useCallback(() => {
-    // TODO: Apply references logic
-    setIsReferencesModalVisible(false);
+  const handleSelectPostType = useCallback((value: string) => {
+    setSelectedPostType(value);
   }, []);
+
+  const handleSelectBrandPersona = useCallback((value: string) => {
+    setSelectedBrandPersona(value);
+  }, []);
+
+  const handleApplyTune = useCallback(() => {
+    // Маппинг brand persona в значение
+    const brandPersonaMap: Record<string, string> = {
+      naval: '@naval',
+      sam_altman: '@sama',
+      levelsio: '@levelsio',
+    };
+    const brandPersonaValue = selectedBrandPersona ? brandPersonaMap[selectedBrandPersona] : undefined;
+
+    // Сохраняем настройки в стор
+    socialPostStore.updateInput({ 
+      platform: selectedNetwork,
+      goal: selectedGoal,
+      target_audience: selectedTargetAudience || undefined,
+      tone: selectedTone || undefined,
+      language: selectedLanguage || undefined,
+      post_type: selectedPostType || undefined,
+      brand_persona: brandPersonaValue,
+      reference_twitter_handles: brandPersonaValue ? [brandPersonaValue] : undefined,
+    });
+    setIsTuneModalVisible(false);
+  }, [selectedNetwork, selectedGoal, selectedTargetAudience, selectedTone, selectedLanguage, selectedPostType, selectedBrandPersona, socialPostStore]);
 
   const handleIssueToggle = useCallback((issueId: string) => {
     setSelectedIssues(prev => {
@@ -279,10 +290,8 @@ function NewScreen() {
                           handleFixesPress();
                         } else if (label === 'Versions') {
                           handleHistoryPress();
-                        } else if (label === 'Goal') {
-                          handleGoalPress();
-                        } else if (label === 'References') {
-                          handleReferencesPress();
+                        } else if (label === 'Tune') {
+                          handleTunePress();
                         }
                       }}>
                       <View style={styles.quickActionIcon}>
@@ -333,22 +342,24 @@ function NewScreen() {
           onDeleteVersion={(versionId) => socialPostStore.removePostVersion(versionId)}
         />
 
-        <GoalModal
-          visible={isGoalModalVisible}
-          goals={postGoals}
+        <TuneModal
+          visible={isTuneModalVisible}
+          selectedPlatform={selectedNetwork}
           selectedGoal={selectedGoal}
-          onClose={handleCloseGoal}
+          selectedTargetAudience={selectedTargetAudience}
+          selectedTone={selectedTone}
+          selectedLanguage={selectedLanguage}
+          selectedPostType={selectedPostType}
+          selectedBrandPersona={selectedBrandPersona}
+          onClose={handleCloseTune}
+          onSelectPlatform={handleSelectPlatform}
           onSelectGoal={handleSelectGoal}
-          onApply={handleApplyGoal}
-        />
-
-        <ReferencesModal
-          visible={isReferencesModalVisible}
-          referenceText={referenceText}
-          onClose={handleCloseReferences}
-          onReferenceTextChange={setReferenceText}
-          onAddReference={handleAddReference}
-          onApply={handleApplyReferences}
+          onSelectTargetAudience={handleSelectTargetAudience}
+          onSelectTone={handleSelectTone}
+          onSelectLanguage={handleSelectLanguage}
+          onSelectPostType={handleSelectPostType}
+          onSelectBrandPersona={handleSelectBrandPersona}
+          onApply={handleApplyTune}
         />
       </View>
     </SafeAreaView>
