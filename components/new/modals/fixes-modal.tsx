@@ -1,8 +1,8 @@
 import { Feather } from '@expo/vector-icons';
-import { ListRenderItemInfo, Modal, Platform, Pressable, View, FlatList } from 'react-native';
+import { FlatList, ListRenderItemInfo, Modal, Platform, Pressable, View } from 'react-native';
 
-import { ThemedText } from '@/components/themed-text';
 import { styles } from '@/components/new/styles';
+import { ThemedText } from '@/components/themed-text';
 import { IssueBlock } from '@services/SocialPostService';
 
 type FixesModalProps = {
@@ -32,16 +32,42 @@ export function FixesModal({
       <View style={styles.issueContent}>
         <ThemedText style={styles.issueTitle}>{item.title}</ThemedText>
         <ThemedText style={styles.issueScore}>
-          Impact: {Math.round(item.score_impact)} · Priority: {item.priority ?? 'medium'}
+          <ThemedText style={{ fontWeight: 'bold', color: '#111827' }}>Impact:</ThemedText>
+          {' '}
+          <ThemedText
+            style={[
+              Math.round(item.score_impact) >= 8 && Math.round(item.score_impact) <= 10
+                ? { color: '#22c55e' }
+                : {},
+            ]}>
+            {Math.round(item.score_impact)}
+          </ThemedText>
+          {' · Priority: '}
+          <ThemedText
+            style={[
+              (item.priority ?? 'medium').toLowerCase() === 'high'
+                ? { color: '#22c55e' }
+                : {},
+            ]}>
+            {item.priority ?? 'medium'}
+          </ThemedText>
         </ThemedText>
         {item.description ? (
           <ThemedText style={styles.issueAdvice}>{item.description}</ThemedText>
         ) : null}
         {item.advice ? (
-          <ThemedText style={styles.issueAdvice}>Advice: {item.advice}</ThemedText>
+          <ThemedText style={styles.issueAdvice}>
+            <ThemedText style={{ fontWeight: 'bold', color: '#111827' }}>Advice:</ThemedText>
+            {' '}
+            {item.advice}
+          </ThemedText>
         ) : null}
         {item.suggested_fix ? (
-          <ThemedText style={styles.issueAdvice}>Fix: {item.suggested_fix}</ThemedText>
+          <ThemedText style={styles.issueAdvice}>
+            <ThemedText style={{ fontWeight: 'bold', color: '#111827' }}>Fix:</ThemedText>
+            {' '}
+            {item.suggested_fix}
+          </ThemedText>
         ) : null}
       </View>
     </Pressable>
