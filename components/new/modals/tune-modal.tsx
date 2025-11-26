@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { FlatList, Modal, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { styles } from '@/components/new/styles';
 import { ThemedText } from '@/components/themed-text';
@@ -36,6 +36,8 @@ type TuneModalProps = {
   selectedLanguage?: string;
   selectedPostType?: string;
   selectedBrandPersona?: string;
+  referenceTexts: string[];
+  referenceTextInput: string;
   onClose: () => void;
   onSelectPlatform: (platformId: string) => void;
   onSelectGoal: (goalId: string) => void;
@@ -44,6 +46,9 @@ type TuneModalProps = {
   onSelectLanguage: (value: string) => void;
   onSelectPostType: (value: string) => void;
   onSelectBrandPersona: (value: string) => void;
+  onReferenceTextInputChange: (text: string) => void;
+  onAddReferenceText: () => void;
+  onRemoveReferenceText: (index: number) => void;
   onApply: () => void;
 };
 
@@ -92,6 +97,12 @@ const postTypes: Option[] = [
 
 const brandPersonas: BrandPersonaOption[] = [
   {
+    id: 'none',
+    label: 'None',
+    value: '',
+    description: 'без указания какого-либо человека',
+  },
+  {
     id: 'naval',
     label: 'Naval',
     value: '@naval',
@@ -120,6 +131,8 @@ export function TuneModal({
   selectedLanguage,
   selectedPostType,
   selectedBrandPersona,
+  referenceTexts,
+  referenceTextInput,
   onClose,
   onSelectPlatform,
   onSelectGoal,
@@ -128,6 +141,9 @@ export function TuneModal({
   onSelectLanguage,
   onSelectPostType,
   onSelectBrandPersona,
+  onReferenceTextInputChange,
+  onAddReferenceText,
+  onRemoveReferenceText,
   onApply,
 }: TuneModalProps) {
   return (
@@ -139,7 +155,6 @@ export function TuneModal({
       <View style={[styles.modalOverlay, Platform.OS === 'web' && styles.modalOverlayWeb]}>
         <Pressable style={styles.modalBackdrop} onPress={onClose} />
         <View style={[tuneModalStyles.tuneModal, Platform.OS === 'web' && tuneModalStyles.tuneModalWeb]}>
-          <View style={styles.fixesModalHandle} />
 
           <View style={tuneModalStyles.tuneHeader}>
             <ThemedText style={tuneModalStyles.tuneTitle}>Tune</ThemedText>
@@ -152,6 +167,85 @@ export function TuneModal({
             style={tuneModalStyles.tuneContent}
             contentContainerStyle={tuneModalStyles.tuneContentContainer}
             showsVerticalScrollIndicator>
+            {/* Brand Persona Section */}
+            <View style={tuneModalStyles.section}>
+              <ThemedText style={tuneModalStyles.sectionTitle}>Brand persona from X</ThemedText>
+              <View style={tuneModalStyles.brandPersonaOptionsContainer}>
+                {brandPersonas.map((persona) => (
+                  <Pressable
+                    key={persona.id}
+                    style={[
+                      tuneModalStyles.brandPersonaButton,
+                      selectedBrandPersona === persona.id && tuneModalStyles.optionButtonSelected,
+                    ]}
+                    onPress={() => onSelectBrandPersona(persona.id)}>
+                    <ThemedText
+                      style={[
+                        tuneModalStyles.optionButtonText,
+                        selectedBrandPersona === persona.id && tuneModalStyles.optionButtonTextSelected,
+                      ]}>
+                      {persona.label}
+                    </ThemedText>
+                    {persona.description && (
+                      <ThemedText
+                        style={[
+                          tuneModalStyles.brandPersonaDescription,
+                          selectedBrandPersona === persona.id && tuneModalStyles.brandPersonaDescriptionSelected,
+                        ]}>
+                        {persona.description}
+                      </ThemedText>
+                    )}
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+
+            {/* References Texts Section */}
+            <View style={tuneModalStyles.section}>
+              <ThemedText style={tuneModalStyles.sectionTitle}>References texts</ThemedText>
+              {referenceTexts.length > 0 && (
+                <View style={tuneModalStyles.referenceList}>
+                  {referenceTexts.map((text, index) => (
+                    <View key={index} style={tuneModalStyles.referenceItem}>
+                      <ThemedText style={tuneModalStyles.referenceItemText} numberOfLines={1}>
+                        {text.length > 30 ? `${text.substring(0, 30)}...` : text}
+                      </ThemedText>
+                      <Pressable
+                        style={tuneModalStyles.referenceRemoveButton}
+                        onPress={() => onRemoveReferenceText(index)}>
+                        <Feather name="x" size={16} color="#EF4444" />
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
+              )}
+              <View style={tuneModalStyles.referenceInputContainer}>
+                <TextInput
+                  style={tuneModalStyles.referenceInput}
+                  placeholder="Enter reference text"
+                  placeholderTextColor="#9CA3AF"
+                  value={referenceTextInput}
+                  onChangeText={onReferenceTextInputChange}
+                  multiline
+                />
+                <Pressable
+                  style={[
+                    tuneModalStyles.addReferenceButton,
+                    !referenceTextInput.trim() && tuneModalStyles.addReferenceButtonDisabled,
+                  ]}
+                  onPress={onAddReferenceText}
+                  disabled={!referenceTextInput.trim()}>
+                  <ThemedText
+                    style={[
+                      tuneModalStyles.addReferenceButtonText,
+                      !referenceTextInput.trim() && tuneModalStyles.addReferenceButtonTextDisabled,
+                    ]}>
+                    Add
+                  </ThemedText>
+                </Pressable>
+              </View>
+            </View>
+
             {/* Platform Section */}
             <View style={tuneModalStyles.section}>
               <ThemedText style={tuneModalStyles.sectionTitle}>Platform</ThemedText>
@@ -249,7 +343,7 @@ export function TuneModal({
             </View>
 
             {/* Language Section */}
-            <View style={tuneModalStyles.section}>
+            {/* <View style={tuneModalStyles.section}>
               <ThemedText style={tuneModalStyles.sectionTitle}>Language</ThemedText>
               <View style={tuneModalStyles.optionsContainer}>
                 {languages.map((language) => (
@@ -270,10 +364,10 @@ export function TuneModal({
                   </Pressable>
                 ))}
               </View>
-            </View>
+            </View> */}
 
             {/* Post Type Section */}
-            <View style={tuneModalStyles.section}>
+            {/* <View style={tuneModalStyles.section}>
               <ThemedText style={tuneModalStyles.sectionTitle}>Post type</ThemedText>
               <View style={tuneModalStyles.optionsContainer}>
                 {postTypes.map((postType) => (
@@ -294,38 +388,8 @@ export function TuneModal({
                   </Pressable>
                 ))}
               </View>
-            </View>
+            </View> */}
 
-            {/* Brand Persona Section */}
-            <View style={tuneModalStyles.section}>
-              <ThemedText style={tuneModalStyles.sectionTitle}>Brand persona from X</ThemedText>
-              <View style={tuneModalStyles.brandPersonaOptionsContainer}>
-                {brandPersonas.map((persona) => (
-                  <Pressable
-                    key={persona.id}
-                    style={[
-                      tuneModalStyles.brandPersonaButton,
-                      selectedBrandPersona === persona.id && tuneModalStyles.optionButtonSelected,
-                    ]}
-                    onPress={() => onSelectBrandPersona(persona.id)}>
-                    <ThemedText
-                      style={[
-                        tuneModalStyles.optionButtonText,
-                        selectedBrandPersona === persona.id && tuneModalStyles.optionButtonTextSelected,
-                      ]}>
-                      {persona.label}
-                    </ThemedText>
-                    <ThemedText
-                      style={[
-                        tuneModalStyles.brandPersonaDescription,
-                        selectedBrandPersona === persona.id && tuneModalStyles.brandPersonaDescriptionSelected,
-                      ]}>
-                      {persona.description}
-                    </ThemedText>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
           </ScrollView>
 
           <View style={tuneModalStyles.tuneButtons}>
@@ -425,10 +489,6 @@ const tuneModalStyles = StyleSheet.create({
   optionButtonTextSelected: {
     color: '#fff',
   },
-  brandPersonaOptionsContainer: {
-    flexDirection: 'column',
-    gap: 8,
-  },
   brandPersonaButton: {
     paddingHorizontal: 13,
     paddingVertical: 10,
@@ -447,6 +507,70 @@ const tuneModalStyles = StyleSheet.create({
   },
   brandPersonaDescriptionSelected: {
     color: '#D1D5DB',
+  },
+  referenceInputContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'flex-end',
+  },
+  referenceInput: {
+    flex: 1,
+    minHeight: 40,
+    maxHeight: 100,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    fontSize: 11,
+    color: '#111827',
+    textAlignVertical: 'top',
+  },
+  addReferenceButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#111827',
+  },
+  addReferenceButtonDisabled: {
+    backgroundColor: '#9CA3AF',
+    opacity: 0.6,
+  },
+  addReferenceButtonText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  addReferenceButtonTextDisabled: {
+    color: '#D1D5DB',
+  },
+  referenceList: {
+    marginTop: 8,
+    gap: 8,
+  },
+  referenceItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  referenceItemText: {
+    flex: 1,
+    fontSize: 11,
+    color: '#111827',
+  },
+  referenceRemoveButton: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 8,
   },
   tuneButtons: {
     flexDirection: 'row',

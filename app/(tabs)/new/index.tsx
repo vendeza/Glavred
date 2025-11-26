@@ -66,11 +66,13 @@ function NewScreen() {
   const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
   const [isTuneModalVisible, setIsTuneModalVisible] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState<string>('neutral');
-  const [selectedTargetAudience, setSelectedTargetAudience] = useState<string>('');
-  const [selectedTone, setSelectedTone] = useState<string>('');
+  const [selectedTargetAudience, setSelectedTargetAudience] = useState<string>('general');
+  const [selectedTone, setSelectedTone] = useState<string>('friendly');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
   const [selectedPostType, setSelectedPostType] = useState<string>('');
   const [selectedBrandPersona, setSelectedBrandPersona] = useState<string>('');
+  const [referenceTexts, setReferenceTexts] = useState<string[]>([]);
+  const [referenceTextInput, setReferenceTextInput] = useState<string>('');
   const { socialPostStore } = useStores();
   const issues = socialPostStore.evaluation?.issues ?? [];
   const isAnalyzing = socialPostStore.isAnalyzing;
@@ -118,7 +120,20 @@ function NewScreen() {
 
   const handleSelectPlatform = useCallback((platformId: string) => {
     setSelectedNetwork(platformId);
-  }, []);
+    
+    // Устанавливаем max_length в зависимости от платформы
+    const platformMaxLengths: Record<string, number> = {
+      x: 280,
+      threads: 500,
+      linkedin: 3000,
+      instagram: 2200,
+    };
+    
+    const maxLength = platformMaxLengths[platformId];
+    if (maxLength) {
+      socialPostStore.updateInput({ max_length: maxLength });
+    }
+  }, [socialPostStore]);
 
   const handleSelectGoal = useCallback((goalId: string) => {
     setSelectedGoal(goalId);
@@ -144,9 +159,21 @@ function NewScreen() {
     setSelectedBrandPersona(value);
   }, []);
 
+  const handleAddReferenceText = useCallback(() => {
+    if (referenceTextInput.trim()) {
+      setReferenceTexts(prev => [...prev, referenceTextInput.trim()]);
+      setReferenceTextInput('');
+    }
+  }, [referenceTextInput]);
+
+  const handleRemoveReferenceText = useCallback((index: number) => {
+    setReferenceTexts(prev => prev.filter((_, i) => i !== index));
+  }, []);
+
   const handleApplyTune = useCallback(() => {
     // Маппинг brand persona в значение
     const brandPersonaMap: Record<string, string> = {
+      none: '',
       naval: '@naval',
       sam_altman: '@sama',
       levelsio: '@levelsio',
@@ -157,15 +184,16 @@ function NewScreen() {
     socialPostStore.updateInput({ 
       platform: selectedNetwork,
       goal: selectedGoal,
-      target_audience: selectedTargetAudience || undefined,
-      tone: selectedTone || undefined,
+      target_audience: selectedTargetAudience,
+      tone: selectedTone,
       language: selectedLanguage || undefined,
       post_type: selectedPostType || undefined,
-      brand_persona: brandPersonaValue,
-      reference_twitter_handles: brandPersonaValue ? [brandPersonaValue] : undefined,
+      brand_persona: brandPersonaValue || undefined,
+      reference_twitter_handles: brandPersonaValue && brandPersonaValue !== '' ? [brandPersonaValue] : [],
+      reference_texts: referenceTexts.length > 0 ? referenceTexts : undefined,
     });
     setIsTuneModalVisible(false);
-  }, [selectedNetwork, selectedGoal, selectedTargetAudience, selectedTone, selectedLanguage, selectedPostType, selectedBrandPersona, socialPostStore]);
+  }, [selectedNetwork, selectedGoal, selectedTargetAudience, selectedTone, selectedLanguage, selectedPostType, selectedBrandPersona, referenceTexts, socialPostStore]);
 
   const handleIssueToggle = useCallback((issueId: string) => {
     setSelectedIssues(prev => {
@@ -351,6 +379,8 @@ function NewScreen() {
           selectedLanguage={selectedLanguage}
           selectedPostType={selectedPostType}
           selectedBrandPersona={selectedBrandPersona}
+          referenceTexts={referenceTexts}
+          referenceTextInput={referenceTextInput}
           onClose={handleCloseTune}
           onSelectPlatform={handleSelectPlatform}
           onSelectGoal={handleSelectGoal}
@@ -359,6 +389,9 @@ function NewScreen() {
           onSelectLanguage={handleSelectLanguage}
           onSelectPostType={handleSelectPostType}
           onSelectBrandPersona={handleSelectBrandPersona}
+          onReferenceTextInputChange={setReferenceTextInput}
+          onAddReferenceText={handleAddReferenceText}
+          onRemoveReferenceText={handleRemoveReferenceText}
           onApply={handleApplyTune}
         />
       </View>
