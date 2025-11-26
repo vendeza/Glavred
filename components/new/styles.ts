@@ -86,8 +86,8 @@ export const styles = StyleSheet.create({
   },
   sheetContent: {
     paddingHorizontal: 24,
-    paddingVertical: 20,
-    gap: 20,
+    paddingVertical: 10,
+    gap: 6,
   },
   quickActionsRow: {
     flexDirection: 'row',
@@ -95,10 +95,10 @@ export const styles = StyleSheet.create({
   },
   quickAction: {
     alignItems: 'center',
-    gap: 4,
-    padding: 8,
+    gap: 0,
+    padding: 6,
     paddingVertical: 0,
-    borderRadius: 12,
+    borderRadius: 10,
   },
   quickActionSelected: {
     borderWidth: 1,
@@ -106,13 +106,13 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
   },
   quickActionIcon: {
-    width: 18,
-    height: 18,
+    width: 16,
+    height: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
   quickActionLabel: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#374151',
   },
   sheetButtons: {
@@ -122,8 +122,8 @@ export const styles = StyleSheet.create({
   },
   secondaryButton: {
     flex: 1,
-    height: 48,
-    borderRadius: 16,
+    height: 40,
+    borderRadius: 12,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#D1D5DB',
@@ -132,12 +132,13 @@ export const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     fontWeight: '600',
+    fontSize: 14,
     color: '#111827',
   },
   primaryButton: {
     flex: 1.4,
-    height: 52,
-    borderRadius: 18,
+    height: 40,
+    borderRadius: 12,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#D1D5DB',
@@ -149,19 +150,20 @@ export const styles = StyleSheet.create({
   },
   primaryButtonText: {
     color: '#111827',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
   },
   ghostButton: {
     flex: 1,
-    height: 48,
-    borderRadius: 16,
+    height: 40,
+    borderRadius: 12,
     backgroundColor: '#111827',
     alignItems: 'center',
     justifyContent: 'center',
   },
   ghostButtonText: {
     fontWeight: '600',
+    fontSize: 14,
     color: '#fff',
   },
   xCard: {

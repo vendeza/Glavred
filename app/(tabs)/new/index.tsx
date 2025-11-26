@@ -282,7 +282,7 @@ function NewScreen() {
                     }
                   }}>
                   <View style={styles.quickActionIcon}>
-                    <Feather name={icon} size={18} color="#0F172A" />
+                    <Feather name={icon} size={16} color="#0F172A" />
                   </View>
                   <ThemedText style={styles.quickActionLabel}>{label}</ThemedText>
                 </TouchableOpacity>
