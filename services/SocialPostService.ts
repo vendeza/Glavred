@@ -94,7 +94,7 @@ export type AnalyzePostOptions = {
 };
 
 export class SocialPostService {
-  private static readonly FUNCTION_NAME = 'buildSocialPostEvaluationPrompt';
+  private static readonly FUNCTION_NAME = 'analyzeSocialPost';
   private static readonly APPLY_FUNCTION_NAME = 'applyPostChanges';
   private static nativeFunctionsInstance: FirebaseFunctionsTypes.Module | null = null;
 
@@ -119,12 +119,19 @@ export class SocialPostService {
     const callOptions = options?.timeoutMs !== undefined ? { timeout: options.timeoutMs } : undefined;
 
     if (Platform.OS === 'web') {
-      const [{ getFirebaseWebFunctions }, firebaseWebFunctions] = await Promise.all([
+      const [{ getFirebaseWebApp, getFirebaseWebFunctions }, firebaseWebFunctions] = await Promise.all([
         import('@/configs/firebaseWeb'),
         import('firebase/functions'),
       ]);
 
-      const functionsInstance = getFirebaseWebFunctions();
+      // Ensure Firebase app is initialized before getting Functions
+      const app = getFirebaseWebApp();
+      console.log('[SocialPostService] Firebase app initialized:', app.name);
+      
+      // Get Functions instance (now async)
+      const functionsInstance = await getFirebaseWebFunctions();
+      console.log('[SocialPostService] Functions instance obtained');
+      
       const callable = firebaseWebFunctions.httpsCallable<Request, Response>(
         functionsInstance,
         functionName,

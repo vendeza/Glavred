@@ -7,7 +7,7 @@
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web",
+    "web": "expo start --web --clear",
     "lint": "expo lint"
   },
   "dependencies": {
@@ -39,7 +39,7 @@
     "expo-symbols": "~1.0.7",
     "expo-system-ui": "~6.0.8",
     "expo-web-browser": "~15.0.9",
-    "firebase": "^12.6.0",
+    "firebase": "^12.4.0",
     "mobx": "^6.15.0",
     "mobx-react-lite": "^4.1.1",
     "react": "19.1.0",
