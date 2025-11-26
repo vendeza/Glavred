@@ -70,7 +70,7 @@ function NewScreen() {
   const [selectedTone, setSelectedTone] = useState<string>('friendly');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
   const [selectedPostType, setSelectedPostType] = useState<string>('');
-  const [selectedBrandPersona, setSelectedBrandPersona] = useState<string>('');
+  const [selectedBrandPersona, setSelectedBrandPersona] = useState<string>('none');
   const [referenceTexts, setReferenceTexts] = useState<string[]>([]);
   const [referenceTextInput, setReferenceTextInput] = useState<string>('');
   const { socialPostStore } = useStores();
