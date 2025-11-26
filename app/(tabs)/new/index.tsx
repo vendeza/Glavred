@@ -1,7 +1,6 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { observer } from 'mobx-react-lite';
-import { ComponentProps, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ComponentProps, ReactNode, useCallback, useEffect, useState } from 'react';
 import { Pressable, ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -22,16 +21,20 @@ type HeaderAction = {
   renderIcon: () => ReactNode;
 };
 
-const defaultPost = `🚀 I've launched my app — Holli
+const defaultPost = `🚀 Я выпустил своё приложение — Holli
 
-It’s a calorie tracker that doesn’t annoy you:
+Это трекер калорий, который не бесит:
 
-📸 Calculates calories from a photo
-✏️ Calculates calories from a description
-🤖 An AI assistant that knows what you ate
+📸 Рассчитывает калории по фото
+📝 Рассчитывает калории по описанию 
+🤖 ИИ ассистент знает что ты ел 
 
-Holli focuses on being simple, clean, and fast.
-No tables. No confusion.`;
+Фокус Holli:
+простой, чистый и быстрый интерфейс.
+Без таблиц. Без перегруза. Без путаницы.
+
+Я сделал его под свою реальную проблему:
+хотел контролировать питание, но не хотел тратить на это время.`;
 
 const headerActions: HeaderAction[] = [
   {
@@ -80,8 +83,6 @@ function NewScreen() {
   const [isReferencesModalVisible, setIsReferencesModalVisible] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState<string>('neutral');
   const [referenceText, setReferenceText] = useState<string>('');
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['34%'], []);
   const { socialPostStore } = useStores();
   const issues = socialPostStore.evaluation?.issues ?? [];
   const isAnalyzing = socialPostStore.isAnalyzing;
@@ -257,57 +258,56 @@ function NewScreen() {
           
         </ScrollView>
 
-        <BottomSheet
-          ref={bottomSheetRef}
-          snapPoints={snapPoints}
-          enablePanDownToClose={false}
-          backgroundStyle={styles.sheetBackground}
-          handleIndicatorStyle={styles.sheetIndicator}>
-          <BottomSheetView style={styles.sheetContent}>
-            <View style={styles.quickActionsRow}>
-              {quickActions.map(({ label, icon }) => (
-                <TouchableOpacity
-                  key={label}
-                  style={styles.quickAction}
-                  activeOpacity={0.6}
-                  onPress={() => {
-                    if (label === 'Fixes') {
-                      handleFixesPress();
-                    } else if (label === 'Versions') {
-                      handleHistoryPress();
-                    } else if (label === 'Goal') {
-                      handleGoalPress();
-                    } else if (label === 'References') {
-                      handleReferencesPress();
-                    }
-                  }}>
-                  <View style={styles.quickActionIcon}>
-                    <Feather name={icon} size={16} color="#0F172A" />
-                  </View>
-                  <ThemedText style={styles.quickActionLabel}>{label}</ThemedText>
-                </TouchableOpacity>
-              ))}
+        <View style={styles.actionsModalContainer} pointerEvents="box-none">
+          <View style={styles.actionsModalContent} pointerEvents="box-none">
+            <View style={[styles.sheetBackground, styles.actionsModalSheet]} pointerEvents="box-none">
+              <View style={styles.sheetContent} pointerEvents="auto">
+                <View style={styles.quickActionsRow}>
+                  {quickActions.map(({ label, icon }) => (
+                    <TouchableOpacity
+                      key={label}
+                      style={styles.quickAction}
+                      activeOpacity={0.6}
+                      onPress={() => {
+                        if (label === 'Fixes') {
+                          handleFixesPress();
+                        } else if (label === 'Versions') {
+                          handleHistoryPress();
+                        } else if (label === 'Goal') {
+                          handleGoalPress();
+                        } else if (label === 'References') {
+                          handleReferencesPress();
+                        }
+                      }}>
+                      <View style={styles.quickActionIcon}>
+                        <Feather name={icon} size={16} color="#0F172A" />
+                      </View>
+                      <ThemedText style={styles.quickActionLabel}>{label}</ThemedText>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                <View style={styles.sheetButtons}>
+                  <Pressable style={styles.secondaryButton}>
+                    <ThemedText style={styles.secondaryButtonText}>Fix</ThemedText>
+                  </Pressable>
+
+                  <Pressable
+                    onPress={handleAnalyze}
+                    style={[styles.primaryButton, isAnalyzing && styles.primaryButtonDisabled]}>
+                    <ThemedText style={styles.primaryButtonText}>
+                      {isAnalyzing ? 'Analyzing…' : 'Analyze'}
+                    </ThemedText>
+                  </Pressable>
+
+                  <Pressable style={styles.ghostButton} onPress={handleSave}>
+                    <ThemedText style={styles.ghostButtonText}>Save</ThemedText>
+                  </Pressable>
+                </View>
+              </View>
             </View>
-
-            <View style={styles.sheetButtons}>
-              <Pressable style={styles.secondaryButton}>
-                <ThemedText style={styles.secondaryButtonText}>Fix</ThemedText>
-              </Pressable>
-
-              <Pressable
-                onPress={handleAnalyze}
-                style={[styles.primaryButton, isAnalyzing && styles.primaryButtonDisabled]}>
-                <ThemedText style={styles.primaryButtonText}>
-                  {isAnalyzing ? 'Analyzing…' : 'Analyze'}
-                </ThemedText>
-              </Pressable>
-
-              <Pressable style={styles.ghostButton} onPress={handleSave}>
-                <ThemedText style={styles.ghostButtonText}>Save</ThemedText>
-              </Pressable>
-            </View>
-          </BottomSheetView>
-        </BottomSheet>
+          </View>
+        </View>
 
         <FixesModal
           visible={isFixesModalVisible}

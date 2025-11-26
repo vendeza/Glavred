@@ -69,6 +69,22 @@ export const styles = StyleSheet.create({
     flex: 0,
     borderWidth: 0,
   },
+  actionsModalContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'flex-end',
+    pointerEvents: 'box-none',
+  },
+  actionsModalContent: {
+    justifyContent: 'flex-end',
+    pointerEvents: 'box-none',
+  },
+  actionsModalSheet: {
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+  },
   sheetBackground: {
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
@@ -204,7 +220,7 @@ export const styles = StyleSheet.create({
     color: '#6B7280',
   },
   xEditor: {
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 24,
     paddingHorizontal: 0,
     paddingVertical: 0,
