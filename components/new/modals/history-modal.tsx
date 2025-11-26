@@ -1,3 +1,5 @@
+import { Feather } from '@expo/vector-icons';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { Modal, Platform, Pressable, View, FlatList } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -17,6 +19,10 @@ type HistoryModalProps = {
 };
 
 export function HistoryModal({ visible, versions, onClose }: HistoryModalProps) {
+  const handleCopy = (content: string) => {
+    Clipboard.setString(content);
+  };
+
   return (
     <Modal
       visible={visible}
@@ -41,6 +47,12 @@ export function HistoryModal({ visible, versions, onClose }: HistoryModalProps) 
                   <ThemedText style={styles.versionLabelText}>{item.label}</ThemedText>
                 </View>
                 <ThemedText style={styles.versionContent}>{item.content}</ThemedText>
+                <Pressable
+                  onPress={() => handleCopy(item.content)}
+                  style={styles.versionCopyButton}>
+                  <Feather name="copy" size={16} color="#111827" />
+                  <ThemedText style={styles.versionCopyButtonText}>Copy</ThemedText>
+                </Pressable>
               </View>
             )}
             ItemSeparatorComponent={() => <View style={styles.versionDivider} />}

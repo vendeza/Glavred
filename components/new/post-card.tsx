@@ -1,10 +1,12 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import {
-    NativeSyntheticEvent,
-    TextInput,
-    TextInputContentSizeChangeEventData,
-    View,
+  NativeSyntheticEvent,
+  Pressable,
+  TextInput,
+  TextInputContentSizeChangeEventData,
+  View,
 } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -74,6 +76,12 @@ const useAutoGrowingHeight = (value: string) => {
 export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps) {
   const { computedEditorHeight, lineCount, handleContentSizeChange } = useAutoGrowingHeight(post);
 
+  const handleCopy = useCallback(() => {
+    if (post.trim()) {
+      Clipboard.setString(post);
+    }
+  }, [post]);
+
   if (selectedNetwork === 'x' || selectedNetwork === 'threads' || selectedNetwork === 'doc') {
     const isThreads = selectedNetwork === 'threads';
     const isDoc = selectedNetwork === 'doc';
@@ -101,7 +109,7 @@ export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps)
             value={post}
             onChangeText={onChangePost}
             textAlignVertical="top"
-            placeholder={isDoc ? 'Вставьте текст или заметку…' : 'Share what’s new…'}
+            placeholder={isDoc ? 'Вставьте текст или заметку…' : "Share what's new…"}
             placeholderTextColor={isDoc ? '#A3A6AF' : '#9AA0A6'}
             numberOfLines={lineCount}
             scrollEnabled={false}
@@ -123,6 +131,20 @@ export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps)
               </View>
             </View>
           )}
+          <View style={styles.postDivider} />
+          <Pressable
+            onPress={handleCopy}
+            style={styles.copyButton}
+            disabled={!post.trim()}>
+            <Feather name="copy" size={16} color={post.trim() ? '#111827' : '#9CA3AF'} />
+            <ThemedText
+              style={[
+                styles.copyButtonText,
+                !post.trim() && { color: '#9CA3AF' },
+              ]}>
+              Copy
+            </ThemedText>
+          </Pressable>
         </View>
       </View>
     );

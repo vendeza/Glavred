@@ -254,7 +254,7 @@ function NewScreen() {
             onChangePost={setPost}
             selectedNetwork={selectedNetwork}
           />
-          <View style={styles.postDivider} />
+          
         </ScrollView>
 
         <BottomSheet
