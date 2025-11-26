@@ -14,6 +14,7 @@ type GoalModalProps = {
   selectedGoal: string;
   onClose: () => void;
   onSelectGoal: (goalId: string) => void;
+  onApply: () => void;
 };
 
 export function GoalModal({
@@ -22,6 +23,7 @@ export function GoalModal({
   selectedGoal,
   onClose,
   onSelectGoal,
+  onApply,
 }: GoalModalProps) {
   return (
     <Modal
@@ -56,6 +58,15 @@ export function GoalModal({
                 </ThemedText>
               </Pressable>
             ))}
+          </View>
+
+          <View style={styles.goalButtons}>
+            <Pressable style={styles.cancelButton} onPress={onClose}>
+              <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
+            </Pressable>
+            <Pressable style={styles.applyButton} onPress={onApply}>
+              <ThemedText style={styles.applyButtonText}>Apply</ThemedText>
+            </Pressable>
           </View>
         </View>
       </View>

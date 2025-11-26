@@ -451,7 +451,7 @@ export const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   goalModal: {
-    height: '50%',
+    height: '70%',
     backgroundColor: '#fff',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
@@ -464,6 +464,7 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 12,
     elevation: 18,
+    flexDirection: 'column',
   },
   goalModalWeb: {
     maxWidth: 800,
@@ -481,6 +482,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
+    flex: 1,
   },
   goalButton: {
     paddingHorizontal: 20,
@@ -501,6 +503,14 @@ export const styles = StyleSheet.create({
   },
   goalButtonTextSelected: {
     color: '#fff',
+  },
+  goalButtons: {
+    flexDirection: 'row',
+    gap: 6,
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    paddingTop: 12,
+    marginTop: 'auto',
   },
   referencesModal: {
     height: '80%',

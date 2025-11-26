@@ -101,12 +101,12 @@ function NewScreen() {
     }
 
     try {
-      socialPostStore.updateInput({ post });
-      await socialPostStore.analyzePost({ post });
+      socialPostStore.updateInput({ post, goal: selectedGoal });
+      await socialPostStore.analyzePost({ post, goal: selectedGoal });
     } catch (error) {
       console.error('Failed to analyze post', error);
     }
-  }, [post, socialPostStore]);
+  }, [post, selectedGoal, socialPostStore]);
 
   const handleFixesPress = useCallback(() => {
     setIsFixesModalVisible(true);
@@ -131,6 +131,12 @@ function NewScreen() {
   const handleSelectGoal = useCallback((goalId: string) => {
     setSelectedGoal(goalId);
   }, []);
+
+  const handleApplyGoal = useCallback(() => {
+    // Сохраняем цель в стор
+    socialPostStore.updateInput({ goal: selectedGoal });
+    setIsGoalModalVisible(false);
+  }, [selectedGoal, socialPostStore]);
 
   const handleReferencesPress = useCallback(() => {
     setIsReferencesModalVisible(true);
@@ -333,6 +339,7 @@ function NewScreen() {
           selectedGoal={selectedGoal}
           onClose={handleCloseGoal}
           onSelectGoal={handleSelectGoal}
+          onApply={handleApplyGoal}
         />
 
         <ReferencesModal
