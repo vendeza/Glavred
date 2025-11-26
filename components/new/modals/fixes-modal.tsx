@@ -14,7 +14,8 @@ type FixesModalProps = {
   onClose: () => void;
   onIssueToggle: (issueId: string) => void;
   onSelectAll: () => void;
-  onApply: () => void;
+  onApply: () => void | Promise<void>;
+  isApplying?: boolean;
 };
 
 export function FixesModal({
@@ -25,6 +26,7 @@ export function FixesModal({
   onIssueToggle,
   onSelectAll,
   onApply,
+  isApplying = false,
 }: FixesModalProps) {
   const renderIssue = ({ item }: ListRenderItemInfo<IssueBlock>) => (
     <Pressable style={fixesModalStyles.issueItem} onPress={() => onIssueToggle(item.id)}>
@@ -119,11 +121,19 @@ export function FixesModal({
           />
 
           <View style={fixesModalStyles.fixesButtons}>
-            <Pressable style={styles.cancelButton} onPress={onClose}>
+            <Pressable style={styles.cancelButton} onPress={onClose} disabled={isApplying}>
               <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
             </Pressable>
-            <Pressable style={styles.applyButton} onPress={onApply}>
-              <ThemedText style={styles.applyButtonText}>Apply advice</ThemedText>
+            <Pressable
+              style={[
+                styles.applyButton,
+                (isApplying || selectedIssues.size === 0) && fixesModalStyles.applyButtonDisabled,
+              ]}
+              onPress={onApply}
+              disabled={isApplying || selectedIssues.size === 0}>
+              <ThemedText style={styles.applyButtonText}>
+                {isApplying ? 'Applying…' : 'Apply advice'}
+              </ThemedText>
             </Pressable>
           </View>
         </View>
@@ -135,7 +145,7 @@ export function FixesModal({
 
 const fixesModalStyles = StyleSheet.create({
   fixesModal: {
-    height: '50%',
+    height: '60%',
     backgroundColor: '#fff',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
@@ -237,5 +247,9 @@ const fixesModalStyles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
     marginTop: 12,
+  },
+  applyButtonDisabled: {
+    backgroundColor: '#9CA3AF',
+    opacity: 0.6,
   },
 });

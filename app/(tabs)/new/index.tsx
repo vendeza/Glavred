@@ -203,10 +203,42 @@ function NewScreen() {
     setIsFixesModalVisible(false);
   }, []);
 
-  const handleApplyAdvice = useCallback(() => {
-    // TODO: Apply selected advice
-    setIsFixesModalVisible(false);
-  }, []);
+  const handleApplyAdvice = useCallback(async () => {
+    if (socialPostStore.isApplyingChanges) {
+      return;
+    }
+
+    if (selectedIssues.size === 0) {
+      return;
+    }
+
+    try {
+      // Преобразуем выбранные issues в ChangeInstruction[]
+      const changes = issues
+        .filter(issue => selectedIssues.has(issue.id))
+        .map(issue => ({
+          id: issue.id,
+          description: issue.suggested_fix || issue.advice || issue.description,
+          context: issue.description,
+          priority: issue.priority,
+        }));
+
+      // Применяем изменения через стор
+      const response = await socialPostStore.applyChanges({
+        post,
+        changes,
+      });
+
+      // Обновляем пост в компоненте
+      setPost(response.updatedPost);
+
+      // Закрываем модалку
+      setIsFixesModalVisible(false);
+    } catch (error) {
+      console.error('Failed to apply advice', error);
+      // Можно добавить показ ошибки пользователю
+    }
+  }, [selectedIssues, issues, socialPostStore, post]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -303,6 +335,7 @@ function NewScreen() {
           onIssueToggle={handleIssueToggle}
           onSelectAll={handleSelectAll}
           onApply={handleApplyAdvice}
+          isApplying={socialPostStore.isApplyingChanges}
         />
 
         <HistoryModal
