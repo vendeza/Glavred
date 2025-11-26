@@ -250,10 +250,10 @@ const fixesModalStyles = StyleSheet.create({
   },
   fixesButtons: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 6,
     paddingHorizontal: 24,
     paddingBottom: 6,
-    paddingTop: 12,  
+    paddingTop: 6,  
     backgroundColor: '#fff',
   },
   applyButtonDisabled: {

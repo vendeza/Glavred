@@ -324,6 +324,7 @@ function NewScreen() {
           visible={isHistoryModalVisible}
           versions={socialPostStore.postVersions}
           onClose={handleCloseHistory}
+          onDeleteVersion={(versionId) => socialPostStore.removePostVersion(versionId)}
         />
 
         <GoalModal

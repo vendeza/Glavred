@@ -1,9 +1,9 @@
 import { Feather } from '@expo/vector-icons';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Modal, Platform, Pressable, View, FlatList } from 'react-native';
+import { FlatList, Modal, Platform, Pressable, View } from 'react-native';
 
-import { ThemedText } from '@/components/themed-text';
 import { styles } from '@/components/new/styles';
+import { ThemedText } from '@/components/themed-text';
 
 type PostVersion = {
   id: string;
@@ -16,11 +16,16 @@ type HistoryModalProps = {
   visible: boolean;
   versions: PostVersion[];
   onClose: () => void;
+  onDeleteVersion?: (versionId: string) => void;
 };
 
-export function HistoryModal({ visible, versions, onClose }: HistoryModalProps) {
+export function HistoryModal({ visible, versions, onClose, onDeleteVersion }: HistoryModalProps) {
   const handleCopy = (content: string) => {
     Clipboard.setString(content);
+  };
+
+  const handleDelete = (versionId: string) => {
+    onDeleteVersion?.(versionId);
   };
 
   return (
@@ -32,10 +37,13 @@ export function HistoryModal({ visible, versions, onClose }: HistoryModalProps) 
       <View style={[styles.modalOverlay, Platform.OS === 'web' && styles.modalOverlayWeb]}>
         <Pressable style={styles.modalBackdrop} onPress={onClose} />
         <View style={[styles.historyModal, Platform.OS === 'web' && styles.historyModalWeb]}>
-          <View style={styles.fixesModalHandle} />
+          
 
           <View style={styles.historyHeader}>
             <ThemedText style={styles.historyTitle}>Post versions</ThemedText>
+            <Pressable onPress={onClose} style={styles.historyCloseButton}>
+              <Feather name="x" size={24} color="#111827" />
+            </Pressable>
           </View>
 
           <FlatList
@@ -47,12 +55,22 @@ export function HistoryModal({ visible, versions, onClose }: HistoryModalProps) 
                   <ThemedText style={styles.versionLabelText}>{item.label}</ThemedText>
                 </View>
                 <ThemedText style={styles.versionContent}>{item.content}</ThemedText>
-                <Pressable
-                  onPress={() => handleCopy(item.content)}
-                  style={styles.versionCopyButton}>
-                  <Feather name="copy" size={16} color="#111827" />
-                  <ThemedText style={styles.versionCopyButtonText}>Copy</ThemedText>
-                </Pressable>
+                <View style={styles.versionButtonsRow}>
+                  <Pressable
+                    onPress={() => handleCopy(item.content)}
+                    style={styles.versionCopyButton}>
+                    <Feather name="copy" size={16} color="#111827" />
+                    <ThemedText style={styles.versionCopyButtonText}>Copy</ThemedText>
+                  </Pressable>
+                  {onDeleteVersion && (
+                    <Pressable
+                      onPress={() => handleDelete(item.id)}
+                      style={styles.versionDeleteButton}>
+                      <Feather name="trash-2" size={16} color="#EF4444" />
+                      <ThemedText style={styles.versionDeleteButtonText}>Delete</ThemedText>
+                    </Pressable>
+                  )}
+                </View>
               </View>
             )}
             ItemSeparatorComponent={() => <View style={styles.versionDivider} />}

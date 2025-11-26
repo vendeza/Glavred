@@ -126,6 +126,10 @@ export class SocialPostStore {
     this.postVersions = [];
   }
 
+  removePostVersion(versionId: string) {
+    this.postVersions = this.postVersions.filter(version => version.id !== versionId);
+  }
+
   removeIssues(issueIds: string[]) {
     if (!this.evaluation) {
       return;
