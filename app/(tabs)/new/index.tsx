@@ -55,40 +55,6 @@ const quickActions: { label: string; icon: FeatherIconName }[] = [
   { label: 'References', icon: 'book-open' },
 ];
 
-type PostVersion = {
-  id: string;
-  label: string;
-  content: string;
-};
-
-const mockPostVersions: PostVersion[] = [
-  {
-    id: '1',
-    label: 'Your',
-    content: `Рады приветствовать вас на сайте
-компании «Итком 2000»! Наша компания
-является ведущим провайдером услуг по
-ИТ-интеграции в регионе. Мы работаем
-на рынке интеграционных и
-телекоммуникационных услуг с 2010 года
-и оказываем полный спектр
-телекоммуникационных услуг под ключ!
-За долгие годы работы мы успешно`,
-  },
-  {
-    id: '2',
-    label: 'AI',
-    content: `Рады приветствовать вас на сайте
-компании «Итком 2000»! Наша компания
-является ведущим провайдером услуг по
-ИТ-интеграции в регионе. Мы работаем
-на рынке интеграционных и
-телекоммуникационных услуг с 2010
-года и оказываем полный спектр
-телекоммуникационных услуг`,
-  },
-];
-
 type PostGoal = {
   id: string;
   label: string;
@@ -203,6 +169,13 @@ function NewScreen() {
     setIsFixesModalVisible(false);
   }, []);
 
+  const handleSave = useCallback(() => {
+    // Добавляем текущую версию поста
+    if (post.trim()) {
+      socialPostStore.addPostVersion(post, 'Your');
+    }
+  }, [post, socialPostStore]);
+
   const handleApplyAdvice = useCallback(async () => {
     if (socialPostStore.isApplyingChanges) {
       return;
@@ -213,6 +186,9 @@ function NewScreen() {
     }
 
     try {
+      // Сохраняем список ID примененных issues
+      const appliedIssueIds = Array.from(selectedIssues);
+
       // Преобразуем выбранные issues в ChangeInstruction[]
       const changes = issues
         .filter(issue => selectedIssues.has(issue.id))
@@ -223,14 +199,20 @@ function NewScreen() {
           priority: issue.priority,
         }));
 
-      // Применяем изменения через стор
+      // Применяем изменения через стор (версия будет добавлена автоматически в сторе)
       const response = await socialPostStore.applyChanges({
         post,
         changes,
       });
 
+      // Удаляем примененные issues из списка
+      socialPostStore.removeIssues(appliedIssueIds);
+
       // Обновляем пост в компоненте
       setPost(response.updatedPost);
+
+      // Очищаем выбранные issues
+      setSelectedIssues(new Set());
 
       // Закрываем модалку
       setIsFixesModalVisible(false);
@@ -320,7 +302,7 @@ function NewScreen() {
                 </ThemedText>
               </Pressable>
 
-              <Pressable style={styles.ghostButton}>
+              <Pressable style={styles.ghostButton} onPress={handleSave}>
                 <ThemedText style={styles.ghostButtonText}>Save</ThemedText>
               </Pressable>
             </View>
@@ -340,7 +322,7 @@ function NewScreen() {
 
         <HistoryModal
           visible={isHistoryModalVisible}
-          versions={mockPostVersions}
+          versions={socialPostStore.postVersions}
           onClose={handleCloseHistory}
         />
 

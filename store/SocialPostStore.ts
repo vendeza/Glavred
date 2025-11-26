@@ -29,6 +29,8 @@ export class SocialPostStore {
   warnings: string[] = [];
   pendingChanges: ChangeInstruction[] = [];
 
+  postVersions: Array<{ id: string; label: string; content: string; timestamp: number }> = [];
+
   isAnalyzing = false;
   isApplyingChanges = false;
   error?: string;
@@ -106,6 +108,32 @@ export class SocialPostStore {
     this.pendingChanges = [];
     this.changeLog = undefined;
     this.warnings = [];
+  }
+
+  addPostVersion(content: string, label: string = 'Your') {
+    const id = `version-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const version = {
+      id,
+      label,
+      content,
+      timestamp: Date.now(),
+    };
+    this.postVersions = [version, ...this.postVersions];
+    return version;
+  }
+
+  clearPostVersions() {
+    this.postVersions = [];
+  }
+
+  removeIssues(issueIds: string[]) {
+    if (!this.evaluation) {
+      return;
+    }
+    this.evaluation = {
+      ...this.evaluation,
+      issues: this.evaluation.issues.filter(issue => !issueIds.includes(issue.id)),
+    };
   }
 
   setPendingChanges(changes: ChangeInstruction[]) {
@@ -221,10 +249,14 @@ export class SocialPostStore {
       );
 
       runInAction(() => {
+        const previousPost = this.post;
         this.post = response.updatedPost;
         this.changeLog = response.changeLog;
         this.warnings = response.warnings;
         this.pendingChanges = [];
+        
+        // Добавляем версию после применения изменений
+        this.addPostVersion(response.updatedPost, 'AI');
       });
 
       return response;

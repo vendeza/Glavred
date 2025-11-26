@@ -7,6 +7,7 @@ type PostVersion = {
   id: string;
   label: string;
   content: string;
+  timestamp?: number;
 };
 
 type HistoryModalProps = {
