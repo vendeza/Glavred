@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { FlatList, ListRenderItemInfo, Modal, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { FlatList, ListRenderItemInfo, Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { styles } from '@/components/new/styles';
 import { ThemedText } from '@/components/themed-text';
@@ -79,66 +79,65 @@ export function FixesModal({
 
   const keyExtractor = (item: IssueBlock) => item.id;
 
-  return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent
-      presentationStyle="overFullScreen">
-      <View style={[styles.modalOverlay, Platform.OS === 'web' && styles.modalOverlayWeb]}>
-        <Pressable style={styles.modalBackdrop} onPress={onClose} />
-        <View style={[fixesModalStyles.fixesModal, Platform.OS === 'web' && fixesModalStyles.fixesModalWeb]}>
-          <View style={styles.fixesModalHandle} />
+  if (!visible) {
+    return null;
+  }
 
-          <View style={fixesModalStyles.fixesHeader}>
+  return (
+    <View style={[styles.modalOverlay, Platform.OS === 'web' && styles.modalOverlayWeb]} pointerEvents="box-none">
+      <View style={[fixesModalStyles.fixesModal, Platform.OS === 'web' && fixesModalStyles.fixesModalWeb]} pointerEvents="box-none">
+        <View style={fixesModalStyles.fixesModalContent} pointerEvents="box-none">
+          <View style={fixesModalStyles.fixesHeader} pointerEvents="auto">
             <View style={fixesModalStyles.fixesHeaderSpacer} />
             <Pressable onPress={onSelectAll}>
               <ThemedText style={fixesModalStyles.selectAllText}>Select all</ThemedText>
             </Pressable>
           </View>
 
-          <FlatList
-            data={issues}
-            keyExtractor={keyExtractor}
-            renderItem={renderIssue}
-            ItemSeparatorComponent={() => <View style={fixesModalStyles.issueDivider} />}
-            style={fixesModalStyles.issuesList}
-            contentContainerStyle={
-              issues.length === 0 ? fixesModalStyles.issuesListEmpty : fixesModalStyles.issuesListContent
-            }
-            ListEmptyComponent={
-              <View style={fixesModalStyles.emptyState}>
-                <ThemedText style={fixesModalStyles.emptyStateTitle}>No issues yet</ThemedText>
-                <ThemedText style={fixesModalStyles.emptyStateDescription}>
-                  Run Analyze to see personalized fixes for your post.
-                </ThemedText>
-              </View>
-            }
-            showsVerticalScrollIndicator
-            bounces
-            nestedScrollEnabled
-            keyboardShouldPersistTaps="handled"
-          />
-
-          <View style={fixesModalStyles.fixesButtons}>
-            <Pressable style={styles.cancelButton} onPress={onClose} disabled={isApplying}>
-              <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
-            </Pressable>
-            <Pressable
-              style={[
-                styles.applyButton,
-                (isApplying || selectedIssues.size === 0) && fixesModalStyles.applyButtonDisabled,
-              ]}
-              onPress={onApply}
-              disabled={isApplying || selectedIssues.size === 0}>
-              <ThemedText style={styles.applyButtonText}>
-                {isApplying ? 'Applying…' : 'Apply advice'}
-              </ThemedText>
-            </Pressable>
+          <View style={fixesModalStyles.issuesListContainer} pointerEvents="auto">
+            <FlatList
+              data={issues}
+              keyExtractor={keyExtractor}
+              renderItem={renderIssue}
+              ItemSeparatorComponent={() => <View style={fixesModalStyles.issueDivider} />}
+              style={fixesModalStyles.issuesList}
+              contentContainerStyle={
+                issues.length === 0 ? fixesModalStyles.issuesListEmpty : fixesModalStyles.issuesListContent
+              }
+              ListEmptyComponent={
+                <View style={fixesModalStyles.emptyState}>
+                  <ThemedText style={fixesModalStyles.emptyStateTitle}>No issues yet</ThemedText>
+                  <ThemedText style={fixesModalStyles.emptyStateDescription}>
+                    Run Analyze to see personalized fixes for your post.
+                  </ThemedText>
+                </View>
+              }
+              showsVerticalScrollIndicator
+              bounces
+              nestedScrollEnabled
+              keyboardShouldPersistTaps="handled"
+            />
           </View>
         </View>
+
+        <View style={fixesModalStyles.fixesButtons} pointerEvents="auto">
+          <Pressable style={styles.cancelButton} onPress={onClose} disabled={isApplying}>
+            <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
+          </Pressable>
+          <Pressable
+            style={[
+              styles.applyButton,
+              (isApplying || selectedIssues.size === 0) && fixesModalStyles.applyButtonDisabled,
+            ]}
+            onPress={onApply}
+            disabled={isApplying || selectedIssues.size === 0}>
+            <ThemedText style={styles.applyButtonText}>
+              {isApplying ? 'Applying…' : 'Apply advice'}
+            </ThemedText>
+          </Pressable>
+        </View>
       </View>
-    </Modal>
+      </View>
   );
 }
 
@@ -149,15 +148,18 @@ const fixesModalStyles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
-    paddingTop: 12,
-    paddingHorizontal: 24,
-    paddingBottom: 24,
-    gap: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -6 },
     shadowOpacity: 0.2,
     shadowRadius: 12,
     elevation: 18,
+    flexDirection: 'column',
+  },
+  fixesModalContent: {
+    flex: 1,
+    paddingTop: 12,
+    paddingHorizontal: 24,
+    gap: 16,
   },
   fixesModalWeb: {
     maxWidth: 800,
@@ -176,6 +178,9 @@ const fixesModalStyles = StyleSheet.create({
     fontSize: 16,
     color: '#111827',
     fontWeight: '500',
+  },
+  issuesListContainer: {
+    flex: 1,
   },
   issuesList: {
     flex: 1,
@@ -246,7 +251,10 @@ const fixesModalStyles = StyleSheet.create({
   fixesButtons: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: 12,
+    paddingHorizontal: 24,
+    paddingBottom: 6,
+    paddingTop: 12,  
+    backgroundColor: '#fff',
   },
   applyButtonDisabled: {
     backgroundColor: '#9CA3AF',

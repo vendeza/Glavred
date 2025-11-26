@@ -288,8 +288,13 @@ export const styles = StyleSheet.create({
     marginTop: 0,
   },
   modalOverlay: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     justifyContent: 'flex-end',
+    pointerEvents: 'box-none',
   },
   modalOverlayWeb: {
     alignItems: 'center',
@@ -339,7 +344,7 @@ export const styles = StyleSheet.create({
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     paddingTop: 12,
-    paddingHorizontal: 24,
+    paddingHorizontal: 20,
     paddingBottom: 24,
     gap: 16,
     shadowColor: '#000',
@@ -391,7 +396,7 @@ export const styles = StyleSheet.create({
     color: '#6B7280',
   },
   versionContent: {
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 24,
     color: '#111827',
     paddingTop: 8,
