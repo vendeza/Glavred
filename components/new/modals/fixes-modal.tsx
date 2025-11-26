@@ -1,9 +1,11 @@
 import { Feather } from '@expo/vector-icons';
-import { FlatList, ListRenderItemInfo, Modal, Platform, Pressable, View } from 'react-native';
+import { FlatList, ListRenderItemInfo, Modal, Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { styles } from '@/components/new/styles';
 import { ThemedText } from '@/components/themed-text';
 import { IssueBlock } from '@services/SocialPostService';
+
+
 
 type FixesModalProps = {
   visible: boolean;
@@ -25,13 +27,13 @@ export function FixesModal({
   onApply,
 }: FixesModalProps) {
   const renderIssue = ({ item }: ListRenderItemInfo<IssueBlock>) => (
-    <Pressable style={styles.issueItem} onPress={() => onIssueToggle(item.id)}>
-      <View style={styles.issueCheckbox}>
+    <Pressable style={fixesModalStyles.issueItem} onPress={() => onIssueToggle(item.id)}>
+      <View style={fixesModalStyles.issueCheckbox}>
         {selectedIssues.has(item.id) && <Feather name="check" size={16} color="#111827" />}
       </View>
-      <View style={styles.issueContent}>
-        <ThemedText style={styles.issueTitle}>{item.title}</ThemedText>
-        <ThemedText style={styles.issueScore}>
+      <View style={fixesModalStyles.issueContent}>
+        <ThemedText style={fixesModalStyles.issueTitle}>{item.title}</ThemedText>
+        <ThemedText style={fixesModalStyles.issueScore}>
           <ThemedText style={{ fontWeight: 'bold', color: '#111827' }}>Impact:</ThemedText>
           {' '}
           <ThemedText
@@ -53,17 +55,17 @@ export function FixesModal({
           </ThemedText>
         </ThemedText>
         {item.description ? (
-          <ThemedText style={styles.issueAdvice}>{item.description}</ThemedText>
+          <ThemedText style={fixesModalStyles.issueAdvice}>{item.description}</ThemedText>
         ) : null}
         {item.advice ? (
-          <ThemedText style={styles.issueAdvice}>
+          <ThemedText style={fixesModalStyles.issueAdvice}>
             <ThemedText style={{ fontWeight: 'bold', color: '#111827' }}>Advice:</ThemedText>
             {' '}
             {item.advice}
           </ThemedText>
         ) : null}
         {item.suggested_fix ? (
-          <ThemedText style={styles.issueAdvice}>
+          <ThemedText style={fixesModalStyles.issueAdvice}>
             <ThemedText style={{ fontWeight: 'bold', color: '#111827' }}>Fix:</ThemedText>
             {' '}
             {item.suggested_fix}
@@ -83,13 +85,13 @@ export function FixesModal({
       presentationStyle="overFullScreen">
       <View style={[styles.modalOverlay, Platform.OS === 'web' && styles.modalOverlayWeb]}>
         <Pressable style={styles.modalBackdrop} onPress={onClose} />
-        <View style={[styles.fixesModal, Platform.OS === 'web' && styles.fixesModalWeb]}>
+        <View style={[fixesModalStyles.fixesModal, Platform.OS === 'web' && fixesModalStyles.fixesModalWeb]}>
           <View style={styles.fixesModalHandle} />
 
-          <View style={styles.fixesHeader}>
-            <View style={styles.fixesHeaderSpacer} />
+          <View style={fixesModalStyles.fixesHeader}>
+            <View style={fixesModalStyles.fixesHeaderSpacer} />
             <Pressable onPress={onSelectAll}>
-              <ThemedText style={styles.selectAllText}>Select all</ThemedText>
+              <ThemedText style={fixesModalStyles.selectAllText}>Select all</ThemedText>
             </Pressable>
           </View>
 
@@ -97,15 +99,15 @@ export function FixesModal({
             data={issues}
             keyExtractor={keyExtractor}
             renderItem={renderIssue}
-            ItemSeparatorComponent={() => <View style={styles.issueDivider} />}
-            style={styles.issuesList}
+            ItemSeparatorComponent={() => <View style={fixesModalStyles.issueDivider} />}
+            style={fixesModalStyles.issuesList}
             contentContainerStyle={
-              issues.length === 0 ? styles.issuesListEmpty : styles.issuesListContent
+              issues.length === 0 ? fixesModalStyles.issuesListEmpty : fixesModalStyles.issuesListContent
             }
             ListEmptyComponent={
-              <View style={styles.emptyState}>
-                <ThemedText style={styles.emptyStateTitle}>No issues yet</ThemedText>
-                <ThemedText style={styles.emptyStateDescription}>
+              <View style={fixesModalStyles.emptyState}>
+                <ThemedText style={fixesModalStyles.emptyStateTitle}>No issues yet</ThemedText>
+                <ThemedText style={fixesModalStyles.emptyStateDescription}>
                   Run Analyze to see personalized fixes for your post.
                 </ThemedText>
               </View>
@@ -116,7 +118,7 @@ export function FixesModal({
             keyboardShouldPersistTaps="handled"
           />
 
-          <View style={styles.fixesButtons}>
+          <View style={fixesModalStyles.fixesButtons}>
             <Pressable style={styles.cancelButton} onPress={onClose}>
               <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
             </Pressable>
@@ -130,3 +132,110 @@ export function FixesModal({
   );
 }
 
+
+const fixesModalStyles = StyleSheet.create({
+  fixesModal: {
+    height: '50%',
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingTop: 12,
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    gap: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 18,
+  },
+  fixesModalWeb: {
+    maxWidth: 800,
+    width: '100%',
+  },
+  fixesHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  fixesHeaderSpacer: {
+    flex: 1,
+  },
+  selectAllText: {
+    fontSize: 16,
+    color: '#111827',
+    fontWeight: '500',
+  },
+  issuesList: {
+    flex: 1,
+  },
+  issuesListContent: {
+    gap: 0,
+    paddingBottom: 16,
+    flexGrow: 1,
+  },
+  issuesListEmpty: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+  },
+  issueItem: {
+    flexDirection: 'row',
+    gap: 12,
+    paddingVertical: 16,
+    alignItems: 'flex-start',
+  },
+  issueCheckbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: '#111827',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 2,
+  },
+  issueContent: {
+    flex: 1,
+    gap: 4,
+  },
+  issueTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  issueScore: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  issueAdvice: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  issueDivider: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
+    marginLeft: 36,
+  },
+  emptyState: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  emptyStateDescription: {
+    fontSize: 14,
+    color: '#6B7280',
+    textAlign: 'center',
+  },
+  fixesButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+  },
+});
