@@ -4,6 +4,7 @@ import { ComponentProps, ReactNode, useCallback, useEffect, useState } from 'rea
 import { Pressable, ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { LoadingOverlay } from '@/components/loading-overlay';
 import { FixesModal } from '@/components/new/modals/fixes-modal';
 import { HistoryModal } from '@/components/new/modals/history-modal';
 import { TuneModal } from '@/components/new/modals/tune-modal';
@@ -307,33 +308,38 @@ function NewScreen() {
           <View style={styles.actionsModalContent} pointerEvents="box-none">
             <View style={[styles.sheetBackground, styles.actionsModalSheet]} pointerEvents="box-none">
               <View style={styles.sheetContent} pointerEvents="auto">
-                <View style={styles.quickActionsRow}>
-                  {quickActions.map(({ label, icon }) => (
-                    <TouchableOpacity
-                      key={label}
-                      style={styles.quickAction}
-                      activeOpacity={0.6}
-                      onPress={() => {
-                        if (label === 'Fixes') {
-                          handleFixesPress();
-                        } else if (label === 'Versions') {
-                          handleHistoryPress();
-                        } else if (label === 'Tune') {
-                          handleTunePress();
-                        }
-                      }}>
-                      <View style={styles.quickActionIcon}>
-                        <Feather name={icon} size={16} color="#0F172A" />
-                      </View>
-                      <ThemedText style={styles.quickActionLabel}>{label}</ThemedText>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-
                 <View style={styles.sheetButtons}>
-                  <Pressable style={styles.secondaryButton}>
-                    <ThemedText style={styles.secondaryButtonText}>Fix</ThemedText>
-                  </Pressable>
+                  {quickActions.map(({ label, icon }) => {
+                    const isFixes = label === 'Fixes';
+                    const issuesCount = isFixes ? issues.length : 0;
+                    
+                    return (
+                      <View key={label} style={styles.quickActionWrapper}>
+                        <TouchableOpacity
+                          style={styles.quickAction}
+                          activeOpacity={0.6}
+                          onPress={() => {
+                            if (label === 'Fixes') {
+                              handleFixesPress();
+                            } else if (label === 'Versions') {
+                              handleHistoryPress();
+                            } else if (label === 'Tune') {
+                              handleTunePress();
+                            }
+                          }}>
+                          <View style={styles.quickActionIcon}>
+                            <Feather name={icon} size={16} color="#0F172A" />
+                          </View>
+                          <ThemedText style={styles.quickActionLabel}>{label}</ThemedText>
+                        </TouchableOpacity>
+                        {isFixes && issuesCount > 0 && (
+                          <View style={styles.badge}>
+                            <ThemedText style={styles.badgeText}>{issuesCount}</ThemedText>
+                          </View>
+                        )}
+                      </View>
+                    );
+                  })}
 
                   <Pressable
                     onPress={handleAnalyze}
@@ -394,6 +400,8 @@ function NewScreen() {
           onRemoveReferenceText={handleRemoveReferenceText}
           onApply={handleApplyTune}
         />
+
+        <LoadingOverlay visible={isAnalyzing || socialPostStore.isApplyingChanges} />
       </View>
     </SafeAreaView>
   );
