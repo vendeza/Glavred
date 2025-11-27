@@ -40,9 +40,10 @@ export function FixesModal({
           {' '}
           <ThemedText
             style={[
-              (item.priority ?? 'medium').toLowerCase() === 'high'
-                ? { color: '#22c55e' }
-                : {},
+              fixesModalStyles.priorityText,
+              (item.priority ?? 'medium').toLowerCase() === 'high' && fixesModalStyles.priorityHigh,
+              (item.priority ?? 'medium').toLowerCase() === 'medium' && fixesModalStyles.priorityMedium,
+              (item.priority ?? 'medium').toLowerCase() === 'low' && fixesModalStyles.priorityLow,
             ]}>
             {item.priority ?? 'medium'}
           </ThemedText>
@@ -250,5 +251,17 @@ const fixesModalStyles = StyleSheet.create({
   applyButtonDisabled: {
     backgroundColor: '#9CA3AF',
     opacity: 0.6,
+  },
+  priorityText: {
+    fontWeight: '500',
+  },
+  priorityHigh: {
+    color: '#EF4444', // красный для high
+  },
+  priorityMedium: {
+    color: '#F59E0B', // оранжевый для medium
+  },
+  priorityLow: {
+    color: '#10B981', // зеленый для low
   },
 });

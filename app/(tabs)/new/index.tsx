@@ -79,6 +79,23 @@ function NewScreen() {
   const { socialPostStore } = useStores();
   const issues = socialPostStore.evaluation?.issues ?? [];
   const isAnalyzing = socialPostStore.isAnalyzing;
+  const totalScore = socialPostStore.evaluation?.scores?.total;
+
+  const getScoreColor = useCallback((score: number) => {
+    const percentage = Math.min(100, Math.max(0, score));
+    
+    // 90-100% → Тёмно-зелёный или бирюзовый (отличное качество)
+    if (percentage >= 90) return '#26C6DA'; // бирюзовый
+    
+    // 70-90% → Зелёный (хороший результат)
+    if (percentage >= 70) return '#66BB6A'; // зелёный
+    
+    // 40-70% → Оранжевый или жёлтый (среднее качество)
+    if (percentage >= 40) return '#FFC107'; // жёлтый
+    
+    // 0-40% → Красный (низкий score)
+    return '#FF5252'; // красный
+  }, []);
 
   useEffect(() => {
     if (issues.length) {
@@ -362,6 +379,11 @@ function NewScreen() {
                       </View>
                       <ThemedText style={styles.quickActionLabel}>Score</ThemedText>
                     </TouchableOpacity>
+                    {totalScore !== undefined && (
+                      <View style={[styles.badge, { backgroundColor: getScoreColor(totalScore) }]}>
+                        <ThemedText style={styles.badgeText}>{Math.round(totalScore)}</ThemedText>
+                      </View>
+                    )}
                   </View>
 
                   <Pressable
