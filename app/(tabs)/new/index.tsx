@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LoadingOverlay } from '@/components/loading-overlay';
 import { FixesModal } from '@/components/new/modals/fixes-modal';
 import { HistoryModal } from '@/components/new/modals/history-modal';
-import { TuneModal } from '@/components/new/modals/tune-modal';
+import { TuneModal } from '@/components/new/modals/tune';
 import { PostCard } from '@/components/new/post-card';
 import { styles } from '@/components/new/styles';
 import { ThemedText } from '@/components/themed-text';

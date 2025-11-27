@@ -1,0 +1,178 @@
+import { StyleSheet } from 'react-native';
+
+export const tuneModalStyles = StyleSheet.create({
+  tuneModal: {
+    height: '100%',
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingTop: 12,
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    gap: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 18,
+    flexDirection: 'column',
+  },
+  tuneModalWeb: {
+    maxWidth: 800,
+    width: '100%',
+  },
+  tuneHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  tuneTitle: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  tuneCloseButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+  },
+  tuneContent: {
+    flex: 1,
+  },
+  tuneContentContainer: {
+    gap: 24,
+    paddingBottom: 20,
+  },
+  section: {
+    gap: 12,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  optionsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  brandPersonaOptionsContainer: {
+    flexDirection: 'column',
+    gap: 8,
+  },
+  optionButton: {
+    paddingHorizontal: 13,
+    paddingVertical: 8,
+    borderRadius: 13,
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  optionButtonSelected: {
+    backgroundColor: '#111827',
+    borderColor: '#111827',
+  },
+  optionButtonText: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#6B7280',
+  },
+  optionButtonTextSelected: {
+    color: '#fff',
+  },
+  brandPersonaButton: {
+    paddingHorizontal: 13,
+    paddingVertical: 10,
+    borderRadius: 13,
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: 'transparent',
+    alignItems: 'flex-start',
+    gap: 4,
+    width: '100%',
+  },
+  brandPersonaDescription: {
+    fontSize: 10,
+    color: '#6B7280',
+    fontStyle: 'italic',
+  },
+  brandPersonaDescriptionSelected: {
+    color: '#D1D5DB',
+  },
+  referenceInputContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'flex-end',
+  },
+  referenceInput: {
+    flex: 1,
+    minHeight: 40,
+    maxHeight: 100,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    fontSize: 11,
+    color: '#111827',
+    textAlignVertical: 'top',
+  },
+  addReferenceButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#111827',
+  },
+  addReferenceButtonDisabled: {
+    backgroundColor: '#9CA3AF',
+    opacity: 0.6,
+  },
+  addReferenceButtonText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  addReferenceButtonTextDisabled: {
+    color: '#D1D5DB',
+  },
+  referenceList: {
+    marginTop: 8,
+    gap: 8,
+  },
+  referenceItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  referenceItemText: {
+    flex: 1,
+    fontSize: 11,
+    color: '#111827',
+  },
+  referenceRemoveButton: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 8,
+  },
+  tuneButtons: {
+    flexDirection: 'row',
+    gap: 6,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    backgroundColor: '#fff',
+  },
+});
+
