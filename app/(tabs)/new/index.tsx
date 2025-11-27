@@ -99,11 +99,8 @@ function NewScreen() {
   }, []);
 
   useEffect(() => {
-    if (issues.length) {
-      setSelectedIssues(new Set(issues.map(issue => issue.id)));
-    } else {
-      setSelectedIssues(new Set());
-    }
+    // Сбрасываем выбор issues при изменении evaluation
+    setSelectedIssues(new Set());
   }, [socialPostStore.evaluation]);
 
   const handleAnalyze = useCallback(async () => {
