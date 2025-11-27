@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LoadingOverlay } from '@/components/loading-overlay';
 import { FixesModal } from '@/components/new/modals/fixes-modal';
 import { HistoryModal } from '@/components/new/modals/history-modal';
+import { ScoreModal } from '@/components/new/modals/score-modal';
 import { TuneModal } from '@/components/new/modals/tune';
 import { PostCard } from '@/components/new/post-card';
 import { styles } from '@/components/new/styles';
@@ -66,6 +67,7 @@ function NewScreen() {
   const [isFixesModalVisible, setIsFixesModalVisible] = useState(false);
   const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
   const [isTuneModalVisible, setIsTuneModalVisible] = useState(false);
+  const [isScoreModalVisible, setIsScoreModalVisible] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState<string>('neutral');
   const [selectedTargetAudience, setSelectedTargetAudience] = useState<string>('general');
   const [selectedTone, setSelectedTone] = useState<string>('friendly');
@@ -117,6 +119,14 @@ function NewScreen() {
 
   const handleCloseTune = useCallback(() => {
     setIsTuneModalVisible(false);
+  }, []);
+
+  const handleScorePress = useCallback(() => {
+    setIsScoreModalVisible(true);
+  }, []);
+
+  const handleCloseScore = useCallback(() => {
+    setIsScoreModalVisible(false);
   }, []);
 
   const handleSelectPlatform = useCallback((platformId: string) => {
@@ -341,6 +351,19 @@ function NewScreen() {
                     );
                   })}
 
+                  <View style={styles.quickActionWrapper}>
+                    <TouchableOpacity
+                      style={styles.quickAction}
+                      activeOpacity={0.6}
+                      onPress={handleScorePress}
+                      disabled={!socialPostStore.evaluation?.scores}>
+                      <View style={styles.quickActionIcon}>
+                        <Feather name="bar-chart-2" size={16} color="#0F172A" />
+                      </View>
+                      <ThemedText style={styles.quickActionLabel}>Score</ThemedText>
+                    </TouchableOpacity>
+                  </View>
+
                   <Pressable
                     onPress={handleAnalyze}
                     style={[styles.primaryButton, isAnalyzing && styles.primaryButtonDisabled]}>
@@ -399,6 +422,12 @@ function NewScreen() {
           onAddReferenceText={handleAddReferenceText}
           onRemoveReferenceText={handleRemoveReferenceText}
           onApply={handleApplyTune}
+        />
+
+        <ScoreModal
+          visible={isScoreModalVisible}
+          scores={socialPostStore.evaluation?.scores}
+          onClose={handleCloseScore}
         />
 
         <LoadingOverlay visible={isAnalyzing || socialPostStore.isApplyingChanges} />
