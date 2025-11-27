@@ -58,10 +58,12 @@ export const languages: Option[] = [
 ];
 
 export const postTypes: Option[] = [
-  { id: 'post', label: 'Post' },
-  { id: 'thread', label: 'Thread' },
-  { id: 'story', label: 'Story' },
-  { id: 'reel', label: 'Reel' },
+  { id: 'longform_thread', label: 'Longform thread' },
+  { id: 'short_post', label: 'Short post' },
+  { id: 'shitpost', label: 'Shitpost' },
+  { id: 'storytelling', label: 'Storytelling' },
+  { id: 'viral_one_liner', label: 'Viral one-liner' },
+  { id: 'cta_focused', label: 'CTA-focused' },
 ];
 
 export const brandPersonas: BrandPersonaOption[] = [

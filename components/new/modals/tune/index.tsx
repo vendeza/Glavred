@@ -4,7 +4,7 @@ import { Modal, Platform, Pressable, ScrollView, TextInput, View } from 'react-n
 import { styles } from '@/components/new/styles';
 import { ThemedText } from '@/components/themed-text';
 
-import { brandPersonas, goals, platforms, targetAudiences, tones } from './constants';
+import { brandPersonas, goals, platforms, postTypes, targetAudiences, tones } from './constants';
 import { tuneModalStyles } from './styles';
 
 type TuneModalProps = {
@@ -276,7 +276,7 @@ export function TuneModal({
             </View> */}
 
             {/* Post Type Section */}
-            {/* <View style={tuneModalStyles.section}>
+            <View style={tuneModalStyles.section}>
               <ThemedText style={tuneModalStyles.sectionTitle}>Post type</ThemedText>
               <View style={tuneModalStyles.optionsContainer}>
                 {postTypes.map((postType) => (
@@ -297,7 +297,7 @@ export function TuneModal({
                   </Pressable>
                 ))}
               </View>
-            </View> */}
+            </View>
           </ScrollView>
 
           <View style={tuneModalStyles.tuneButtons}>

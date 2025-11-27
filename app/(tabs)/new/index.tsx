@@ -9,6 +9,7 @@ import { FixesModal } from '@/components/new/modals/fixes-modal';
 import { HistoryModal } from '@/components/new/modals/history-modal';
 import { ScoreModal } from '@/components/new/modals/score-modal';
 import { TuneModal } from '@/components/new/modals/tune';
+import { brandPersonas } from '@/components/new/modals/tune/constants';
 import { PostCard } from '@/components/new/post-card';
 import { styles } from '@/components/new/styles';
 import { ThemedText } from '@/components/themed-text';
@@ -72,7 +73,7 @@ function NewScreen() {
   const [selectedTargetAudience, setSelectedTargetAudience] = useState<string>('general');
   const [selectedTone, setSelectedTone] = useState<string>('friendly');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
-  const [selectedPostType, setSelectedPostType] = useState<string>('');
+  const [selectedPostType, setSelectedPostType] = useState<string>('short_post');
   const [selectedBrandPersona, setSelectedBrandPersona] = useState<string>('none');
   const [referenceTexts, setReferenceTexts] = useState<string[]>([]);
   const [referenceTextInput, setReferenceTextInput] = useState<string>('');
@@ -111,12 +112,12 @@ function NewScreen() {
     }
 
     try {
-      socialPostStore.updateInput({ post, goal: selectedGoal });
-      await socialPostStore.analyzePost({ post, goal: selectedGoal });
+      socialPostStore.updateInput({ post, goal: selectedGoal, post_type: selectedPostType });
+      await socialPostStore.analyzePost({ post, goal: selectedGoal, post_type: selectedPostType });
     } catch (error) {
       console.error('Failed to analyze post', error);
     }
-  }, [post, selectedGoal, socialPostStore]);
+  }, [post, selectedGoal, selectedPostType, socialPostStore]);
 
   const handleFixesPress = useCallback(() => {
     setIsFixesModalVisible(true);
@@ -208,6 +209,16 @@ function NewScreen() {
     };
     const brandPersonaValue = selectedBrandPersona ? brandPersonaMap[selectedBrandPersona] : undefined;
 
+    // Формируем описание для reference_twitter_handles
+    let referenceTwitterHandles: string[] = [];
+    if (selectedBrandPersona && selectedBrandPersona !== 'none') {
+      const selectedPersona = brandPersonas.find(p => p.id === selectedBrandPersona);
+      if (selectedPersona && selectedPersona.description) {
+        // Формат: "Label - description"
+        referenceTwitterHandles = [`${selectedPersona.label} - ${selectedPersona.description}`];
+      }
+    }
+
     // Сохраняем настройки в стор
     socialPostStore.updateInput({ 
       platform: selectedNetwork,
@@ -217,7 +228,7 @@ function NewScreen() {
       language: selectedLanguage || undefined,
       post_type: selectedPostType || undefined,
       brand_persona: brandPersonaValue || undefined,
-      reference_twitter_handles: brandPersonaValue && brandPersonaValue !== '' ? [brandPersonaValue] : [],
+      reference_twitter_handles: referenceTwitterHandles,
       reference_texts: referenceTexts.length > 0 ? referenceTexts : undefined,
     });
     setIsTuneModalVisible(false);

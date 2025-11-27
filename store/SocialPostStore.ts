@@ -207,7 +207,7 @@ export class SocialPostStore {
       tone: overrides?.tone ?? this.tone,
       language: overrides?.language ?? this.language ?? 'ru',
       max_length: overrides?.max_length ?? this.max_length,
-      post_type: overrides?.post_type ?? this.post_type,
+      post_type: overrides?.post_type ?? this.post_type ?? 'short_post',
       brand_persona: overrides?.brand_persona ?? this.brand_persona,
       reference_twitter_handles:
         overrides?.reference_twitter_handles ??
