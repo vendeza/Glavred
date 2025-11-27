@@ -25,17 +25,24 @@ export function ScoreModal({ visible, scores, onClose }: ScoreModalProps) {
     { label: 'Shareability', value: scores.shareability, key: 'shareability' },
     { label: 'Value', value: scores.value, key: 'value' },
     { label: 'Identity Match', value: scores.identity_match, key: 'identity_match' },
-    { label: 'CTA Strength', value: scores.cta_strength, key: 'cta_strength' },
     { label: 'Readability', value: scores.readability, key: 'readability' },
-    { label: 'Uniqueness', value: scores.uniqueness, key: 'uniqueness' },
   ];
 
   const getScoreColor = (score: number) => {
     // Score values are already in 0-100 range
     const percentage = Math.min(100, Math.max(0, score));
-    if (percentage >= 80) return '#22c55e'; // green
-    if (percentage >= 60) return '#f59e0b'; // yellow
-    return '#ef4444'; // red
+    
+    // 90-100% → Тёмно-зелёный или бирюзовый (отличное качество)
+    if (percentage >= 90) return '#26C6DA'; // бирюзовый
+    
+    // 70-90% → Зелёный (хороший результат)
+    if (percentage >= 70) return '#66BB6A'; // зелёный
+    
+    // 40-70% → Оранжевый или жёлтый (среднее качество)
+    if (percentage >= 40) return '#FFC107'; // жёлтый
+    
+    // 0-40% → Красный (низкий score)
+    return '#FF5252'; // красный
   };
 
   return (

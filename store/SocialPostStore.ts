@@ -205,7 +205,7 @@ export class SocialPostStore {
       goal: overrides?.goal ?? this.goal,
       target_audience: overrides?.target_audience ?? this.target_audience,
       tone: overrides?.tone ?? this.tone,
-      language: overrides?.language ?? this.language,
+      language: overrides?.language ?? this.language ?? 'ru',
       max_length: overrides?.max_length ?? this.max_length,
       post_type: overrides?.post_type ?? this.post_type,
       brand_persona: overrides?.brand_persona ?? this.brand_persona,

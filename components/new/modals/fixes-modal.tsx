@@ -36,17 +36,8 @@ export function FixesModal({
       <View style={fixesModalStyles.issueContent}>
         <ThemedText style={fixesModalStyles.issueTitle}>{item.title}</ThemedText>
         <ThemedText style={fixesModalStyles.issueScore}>
-          <ThemedText style={{ fontWeight: 'bold', color: '#111827' }}>Impact:</ThemedText>
+          <ThemedText style={{ fontWeight: 'bold', color: '#111827' }}>Priority:</ThemedText>
           {' '}
-          <ThemedText
-            style={[
-              Math.round(item.score_impact) >= 8 && Math.round(item.score_impact) <= 10
-                ? { color: '#22c55e' }
-                : {},
-            ]}>
-            {Math.round(item.score_impact)}
-          </ThemedText>
-          {' · Priority: '}
           <ThemedText
             style={[
               (item.priority ?? 'medium').toLowerCase() === 'high'
