@@ -3,11 +3,10 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import {
   NativeSyntheticEvent,
-  Platform,
   Pressable,
   TextInput,
   TextInputContentSizeChangeEventData,
-  View,
+  View
 } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -112,14 +111,14 @@ export function PostCard({ post, onChangePost, selectedNetwork }: PostCardProps)
             textAlignVertical="top"
             placeholder={isDoc ? 'Вставьте текст или заметку…' : "Share what's new…"}
             placeholderTextColor={isDoc ? '#A3A6AF' : '#9AA0A6'}
-            numberOfLines={lineCount}
+            numberOfLines={40}
             scrollEnabled={false}
-            onContentSizeChange={handleContentSizeChange}
+            //onContentSizeChange={handleContentSizeChange}
             style={[
               styles.editor,
               styles.xEditor,
-              { height: computedEditorHeight },
-              Platform.OS === 'web' && { outline: 'none' },
+              // { height: computedEditorHeight },
+               { outline: 'none' },
             ]}
             showSoftInputOnFocus
             blurOnSubmit={false}
