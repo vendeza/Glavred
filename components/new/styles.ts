@@ -63,7 +63,7 @@ export const styles = StyleSheet.create({
     color: '#6B7280',
   },
   editor: {
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 24,
     minHeight: 50,
     flex: 0,
