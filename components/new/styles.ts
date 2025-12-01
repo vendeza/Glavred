@@ -30,25 +30,64 @@ export const styles = StyleSheet.create({
   },
   headerActions: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
   },
-  headerAction: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: '#fff',
+  modeSwitcher: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 1,
+    gap: 4,
+    padding: 4,
+    borderRadius: 999,
+    backgroundColor: '#F3F4F6',
   },
-  headerActionSelected: {
+  modeButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+  },
+  modeButtonSelected: {
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  modeButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  modeButtonTextSelected: {
+    color: '#111827',
+  },
+  headerTools: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  headerToolButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#111827',
-    backgroundColor: '#1118270D',
+    borderColor: '#E5E7EB',
+  },
+  headerToolButtonDisabled: {
+    opacity: 0.6,
+  },
+  headerToolButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  headerToolButtonTextDisabled: {
+    color: '#94A3B8',
   },
   card: {
     borderRadius: 20,

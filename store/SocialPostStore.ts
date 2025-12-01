@@ -21,6 +21,7 @@ export class SocialPostStore {
   max_length?: SocialPostAnalyzerInput['max_length'];
   post_type?: SocialPostAnalyzerInput['post_type'];
   brand_persona?: SocialPostAnalyzerInput['brand_persona'];
+  mode: SocialPostAnalyzerInput['mode'] = 'basic';
   reference_twitter_handles: string[] = [];
   reference_texts: string[] = [];
 
@@ -75,6 +76,9 @@ export class SocialPostStore {
     if (partial.brand_persona !== undefined) {
       this.brand_persona = partial.brand_persona;
     }
+    if (partial.mode !== undefined) {
+      this.mode = partial.mode;
+    }
     if (partial.reference_twitter_handles !== undefined) {
       this.reference_twitter_handles = partial.reference_twitter_handles ?? [];
     }
@@ -93,6 +97,7 @@ export class SocialPostStore {
     this.max_length = undefined;
     this.post_type = undefined;
     this.brand_persona = undefined;
+    this.mode = 'basic';
     this.reference_twitter_handles = [];
     this.reference_texts = [];
     this.resetEvaluation();
@@ -209,6 +214,7 @@ export class SocialPostStore {
       max_length: overrides?.max_length ?? this.max_length,
       post_type: overrides?.post_type ?? this.post_type ?? 'short_post',
       brand_persona: overrides?.brand_persona ?? this.brand_persona,
+      mode: overrides?.mode ?? this.mode ?? 'basic',
       reference_twitter_handles:
         overrides?.reference_twitter_handles ??
         (this.reference_twitter_handles.length ? this.reference_twitter_handles : undefined),

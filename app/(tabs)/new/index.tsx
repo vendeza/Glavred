@@ -1,6 +1,7 @@
-import { Feather, FontAwesome6 } from '@expo/vector-icons';
+import Clipboard from '@react-native-clipboard/clipboard';
+import { Feather } from '@expo/vector-icons';
 import { observer } from 'mobx-react-lite';
-import { ComponentProps, ReactNode, useCallback, useEffect, useState } from 'react';
+import { ComponentProps, useCallback, useEffect, useState } from 'react';
 import { Pressable, ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -16,12 +17,6 @@ import { ThemedText } from '@/components/themed-text';
 import { useStores } from '@/store/RootStore';
 
 type FeatherIconName = ComponentProps<typeof Feather>['name'];
-type FontAwesome6IconName = ComponentProps<typeof FontAwesome6>['name'];
-
-type HeaderAction = {
-  key: string;
-  renderIcon: () => ReactNode;
-};
 
 const defaultPost = `🚀 Я выпустил своё приложение — Holli
 
@@ -38,32 +33,22 @@ const defaultPost = `🚀 Я выпустил своё приложение — 
 Я сделал его под свою реальную проблему:
 хотел контролировать питание, но не хотел тратить на это время.`;
 
-const headerActions: HeaderAction[] = [
-  {
-    key: 'x',
-    renderIcon: () => <FontAwesome6 name="x-twitter" size={18} color="#111827" />,
-  },
-  {
-    key: 'threads',
-    renderIcon: () => <FontAwesome6 name="threads" size={18} color="#111827" />,
-  },
-  {
-    key: 'doc',
-    renderIcon: () => <Feather name="file-text" size={18} color="#111827" />,
-  },
-];
-
 const quickActions: { label: string; icon: FeatherIconName }[] = [
-  { label: 'Fixes', icon: 'edit-3' },
+  { label: 'Advices', icon: 'edit-3' },
   { label: 'Versions', icon: 'clock' },
   { label: 'Tune', icon: 'settings' },
 ];
 
+const modeOptions: Array<{ id: 'basic' | 'pro'; label: string }> = [
+  { id: 'basic', label: 'Basic' },
+  { id: 'pro', label: 'Pro' },
+];
+
+const DEFAULT_PLATFORM = 'x';
+
 function NewScreen() {
   const [post, setPost] = useState(defaultPost);
-  const [selectedNetwork, setSelectedNetwork] = useState<HeaderAction['key']>(
-    headerActions[0].key,
-  );
+  const [selectedNetwork, setSelectedNetwork] = useState<string>(DEFAULT_PLATFORM);
   const [selectedIssues, setSelectedIssues] = useState<Set<string>>(new Set());
   const [isFixesModalVisible, setIsFixesModalVisible] = useState(false);
   const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
@@ -79,8 +64,10 @@ function NewScreen() {
   const [referenceTextInput, setReferenceTextInput] = useState<string>('');
   const { socialPostStore } = useStores();
   const issues = socialPostStore.evaluation?.issues ?? [];
+  const selectedMode = socialPostStore.mode ?? 'basic';
   const isAnalyzing = socialPostStore.isAnalyzing;
   const totalScore = socialPostStore.evaluation?.scores?.total;
+  const canEditPost = post.trim().length > 0;
 
   const getScoreColor = useCallback((score: number) => {
     const percentage = Math.min(100, Math.max(0, score));
@@ -115,6 +102,15 @@ function NewScreen() {
       console.error('Failed to analyze post', error);
     }
   }, [post, selectedGoal, selectedPostType, socialPostStore]);
+  
+  const handleSelectMode = useCallback(
+    (mode: 'basic' | 'pro') => {
+      if (mode !== selectedMode) {
+        socialPostStore.updateInput({ mode });
+      }
+    },
+    [selectedMode, socialPostStore],
+  );
 
   const handleFixesPress = useCallback(() => {
     setIsFixesModalVisible(true);
@@ -231,6 +227,21 @@ function NewScreen() {
     setIsTuneModalVisible(false);
   }, [selectedNetwork, selectedGoal, selectedTargetAudience, selectedTone, selectedLanguage, selectedPostType, selectedBrandPersona, referenceTexts, socialPostStore]);
 
+  const handleCopyPost = useCallback(() => {
+    if (!post.trim()) {
+      return;
+    }
+    Clipboard.setString(post);
+  }, [post]);
+
+  const handleClearPost = useCallback(() => {
+    if (!post.trim()) {
+      return;
+    }
+    setPost('');
+    socialPostStore.updateInput({ post: '' });
+  }, [post, socialPostStore]);
+
   const handleIssueToggle = useCallback((issueId: string) => {
     setSelectedIssues(prev => {
       const next = new Set(prev);
@@ -316,18 +327,69 @@ function NewScreen() {
             <ThemedText style={styles.heading}>Your post</ThemedText>
 
             <View style={styles.headerActions}>
-              {headerActions.map(({ key, renderIcon }) => (
+              <View style={styles.modeSwitcher}>
+                {modeOptions.map(({ id, label }) => {
+                  const isActive = selectedMode === id;
+                  return (
+                    <Pressable
+                      key={id}
+                      hitSlop={12}
+                      onPress={() => handleSelectMode(id)}
+                      style={[styles.modeButton, isActive && styles.modeButtonSelected]}>
+                      <ThemedText
+                        style={[styles.modeButtonText, isActive && styles.modeButtonTextSelected]}>
+                        {label}
+                      </ThemedText>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              <View style={styles.headerTools}>
                 <Pressable
-                  key={key}
                   hitSlop={12}
-                  onPress={() => setSelectedNetwork(key)}
+                  onPress={handleCopyPost}
+                  disabled={!canEditPost}
                   style={[
-                    styles.headerAction,
-                    selectedNetwork === key && styles.headerActionSelected,
+                    styles.headerToolButton,
+                    !canEditPost && styles.headerToolButtonDisabled,
                   ]}>
-                  {renderIcon()}
+                  <Feather
+                    name="copy"
+                    size={14}
+                    color={canEditPost ? '#111827' : '#94A3B8'}
+                  />
+                  <ThemedText
+                    style={[
+                      styles.headerToolButtonText,
+                      !canEditPost && styles.headerToolButtonTextDisabled,
+                    ]}>
+                    Copy
+                  </ThemedText>
                 </Pressable>
-              ))}
+
+                <Pressable
+                  hitSlop={12}
+                  onPress={handleClearPost}
+                  disabled={!canEditPost}
+                  style={[
+                    styles.headerToolButton,
+                    !canEditPost && styles.headerToolButtonDisabled,
+                  ]}>
+                  <Feather
+                    name="trash-2"
+                    size={14}
+                    color={canEditPost ? '#DC2626' : '#F87171'}
+                  />
+                  <ThemedText
+                    style={[
+                      styles.headerToolButtonText,
+                      !canEditPost && styles.headerToolButtonTextDisabled,
+                    ]}>
+                    Clear
+                  </ThemedText>
+                </Pressable>
+              </View>
             </View>
           </View>
 
@@ -345,7 +407,7 @@ function NewScreen() {
               <View style={styles.sheetContent} pointerEvents="auto">
                 <View style={styles.sheetButtons}>
                   {quickActions.map(({ label, icon }) => {
-                    const isFixes = label === 'Fixes';
+                    const isFixes = label === 'Advices';
                     const issuesCount = isFixes ? issues.length : 0;
                     
                     return (
@@ -354,7 +416,7 @@ function NewScreen() {
                           style={styles.quickAction}
                           activeOpacity={0.6}
                           onPress={() => {
-                            if (label === 'Fixes') {
+                            if (label === 'Advices') {
                               handleFixesPress();
                             } else if (label === 'Versions') {
                               handleHistoryPress();
@@ -402,9 +464,6 @@ function NewScreen() {
                     </ThemedText>
                   </Pressable>
 
-                  <Pressable style={styles.ghostButton} onPress={handleSave}>
-                    <ThemedText style={styles.ghostButtonText}>Save</ThemedText>
-                  </Pressable>
                 </View>
               </View>
             </View>

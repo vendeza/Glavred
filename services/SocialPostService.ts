@@ -13,6 +13,7 @@ export type SocialPostAnalyzerInput = {
   brand_persona?: string;
   reference_twitter_handles?: string[];
   reference_texts?: string[];
+  mode?: 'basic' | 'pro';
 };
 
 export type ScoreBlock = {
