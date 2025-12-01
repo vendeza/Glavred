@@ -14,6 +14,11 @@ export type Option = {
   label: string;
 };
 
+export type ModeOption = {
+  id: 'basic' | 'pro';
+  label: string;
+};
+
 export type BrandPersonaOption = {
   id: string;
   label: string;
@@ -51,10 +56,8 @@ export const tones: Option[] = [
 ];
 
 export const languages: Option[] = [
-  { id: 'en', label: 'English' },
   { id: 'ru', label: 'Russian' },
-  { id: 'es', label: 'Spanish' },
-  { id: 'fr', label: 'French' },
+  { id: 'en', label: 'English' },
 ];
 
 export const postTypes: Option[] = [
@@ -91,5 +94,10 @@ export const brandPersonas: BrandPersonaOption[] = [
     value: '@levelsio',
     description: 'короткие резкие фразы, юмор, практичность, DIY подход',
   },
+];
+
+export const modes: ModeOption[] = [
+  { id: 'basic', label: 'Basic' },
+  { id: 'pro', label: 'Pro' },
 ];
 

@@ -28,40 +28,6 @@ export const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '700',
   },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  modeSwitcher: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    padding: 4,
-    borderRadius: 999,
-    backgroundColor: '#F3F4F6',
-  },
-  modeButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    borderRadius: 999,
-  },
-  modeButtonSelected: {
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  modeButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#6B7280',
-  },
-  modeButtonTextSelected: {
-    color: '#111827',
-  },
   headerTools: {
     flexDirection: 'row',
     alignItems: 'center',

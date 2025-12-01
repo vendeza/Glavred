@@ -4,7 +4,16 @@ import { Modal, Platform, Pressable, ScrollView, TextInput, View } from 'react-n
 import { styles } from '@/components/new/styles';
 import { ThemedText } from '@/components/themed-text';
 
-import { brandPersonas, goals, platforms, postTypes, targetAudiences, tones } from './constants';
+import {
+  brandPersonas,
+  goals,
+  languages,
+  modes,
+  platforms,
+  postTypes,
+  targetAudiences,
+  tones,
+} from './constants';
 import { tuneModalStyles } from './styles';
 
 type TuneModalProps = {
@@ -13,9 +22,10 @@ type TuneModalProps = {
   selectedGoal: string;
   selectedTargetAudience?: string;
   selectedTone?: string;
-  selectedLanguage?: string;
+  selectedLanguage: string;
   selectedPostType?: string;
   selectedBrandPersona?: string;
+  selectedMode: 'basic' | 'pro';
   referenceTexts: string[];
   referenceTextInput: string;
   onClose: () => void;
@@ -26,6 +36,7 @@ type TuneModalProps = {
   onSelectLanguage: (value: string) => void;
   onSelectPostType: (value: string) => void;
   onSelectBrandPersona: (value: string) => void;
+  onSelectMode: (mode: 'basic' | 'pro') => void;
   onReferenceTextInputChange: (text: string) => void;
   onAddReferenceText: () => void;
   onRemoveReferenceText: (index: number) => void;
@@ -41,6 +52,7 @@ export function TuneModal({
   selectedLanguage,
   selectedPostType,
   selectedBrandPersona,
+  selectedMode,
   referenceTexts,
   referenceTextInput,
   onClose,
@@ -51,6 +63,7 @@ export function TuneModal({
   onSelectLanguage,
   onSelectPostType,
   onSelectBrandPersona,
+  onSelectMode,
   onReferenceTextInputChange,
   onAddReferenceText,
   onRemoveReferenceText,
@@ -76,6 +89,55 @@ export function TuneModal({
             style={tuneModalStyles.tuneContent}
             contentContainerStyle={tuneModalStyles.tuneContentContainer}
             showsVerticalScrollIndicator>
+            {/* Mode Section */}
+            <View style={tuneModalStyles.section}>
+              <ThemedText style={tuneModalStyles.sectionTitle}>Mode</ThemedText>
+              <View style={tuneModalStyles.optionsContainer}>
+                {modes.map((mode) => (
+                  <Pressable
+                    key={mode.id}
+                    style={[
+                      tuneModalStyles.optionButton,
+                      selectedMode === mode.id && tuneModalStyles.optionButtonSelected,
+                    ]}
+                    onPress={() => onSelectMode(mode.id)}>
+                    <ThemedText
+                      style={[
+                        tuneModalStyles.optionButtonText,
+                        selectedMode === mode.id && tuneModalStyles.optionButtonTextSelected,
+                      ]}>
+                      {mode.label}
+                    </ThemedText>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+
+            {/* Language Section */}
+            <View style={tuneModalStyles.section}>
+              <ThemedText style={tuneModalStyles.sectionTitle}>Language</ThemedText>
+              <View style={tuneModalStyles.optionsContainer}>
+                {languages.map(language => (
+                  <Pressable
+                    key={language.id}
+                    style={[
+                      tuneModalStyles.optionButton,
+                      selectedLanguage === language.id && tuneModalStyles.optionButtonSelected,
+                    ]}
+                    onPress={() => onSelectLanguage(language.id)}>
+                    <ThemedText
+                      style={[
+                        tuneModalStyles.optionButtonText,
+                        selectedLanguage === language.id &&
+                          tuneModalStyles.optionButtonTextSelected,
+                      ]}>
+                      {language.label}
+                    </ThemedText>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+
             {/* Brand Persona Section */}
             <View style={tuneModalStyles.section}>
               <ThemedText style={tuneModalStyles.sectionTitle}>Brand persona from X</ThemedText>

@@ -39,11 +39,6 @@ const quickActions: { label: string; icon: FeatherIconName }[] = [
   { label: 'Tune', icon: 'settings' },
 ];
 
-const modeOptions: Array<{ id: 'basic' | 'pro'; label: string }> = [
-  { id: 'basic', label: 'Basic' },
-  { id: 'pro', label: 'Pro' },
-];
-
 const DEFAULT_PLATFORM = 'x';
 
 function NewScreen() {
@@ -57,7 +52,7 @@ function NewScreen() {
   const [selectedGoal, setSelectedGoal] = useState<string>('neutral');
   const [selectedTargetAudience, setSelectedTargetAudience] = useState<string>('general');
   const [selectedTone, setSelectedTone] = useState<string>('friendly');
-  const [selectedLanguage, setSelectedLanguage] = useState<string>('');
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('ru');
   const [selectedPostType, setSelectedPostType] = useState<string>('short_post');
   const [selectedBrandPersona, setSelectedBrandPersona] = useState<string>('none');
   const [referenceTexts, setReferenceTexts] = useState<string[]>([]);
@@ -218,7 +213,7 @@ function NewScreen() {
       goal: selectedGoal,
       target_audience: selectedTargetAudience,
       tone: selectedTone,
-      language: selectedLanguage || undefined,
+      language: selectedLanguage || 'ru',
       post_type: selectedPostType || undefined,
       brand_persona: brandPersonaValue || undefined,
       reference_twitter_handles: referenceTwitterHandles,
@@ -326,70 +321,42 @@ function NewScreen() {
           <View style={styles.sectionHeader}>
             <ThemedText style={styles.heading}>Your post</ThemedText>
 
-            <View style={styles.headerActions}>
-              <View style={styles.modeSwitcher}>
-                {modeOptions.map(({ id, label }) => {
-                  const isActive = selectedMode === id;
-                  return (
-                    <Pressable
-                      key={id}
-                      hitSlop={12}
-                      onPress={() => handleSelectMode(id)}
-                      style={[styles.modeButton, isActive && styles.modeButtonSelected]}>
-                      <ThemedText
-                        style={[styles.modeButtonText, isActive && styles.modeButtonTextSelected]}>
-                        {label}
-                      </ThemedText>
-                    </Pressable>
-                  );
-                })}
-              </View>
-
-              <View style={styles.headerTools}>
-                <Pressable
-                  hitSlop={12}
-                  onPress={handleCopyPost}
-                  disabled={!canEditPost}
+            <View style={styles.headerTools}>
+              <Pressable
+                hitSlop={12}
+                onPress={handleCopyPost}
+                disabled={!canEditPost}
+                style={[
+                  styles.headerToolButton,
+                  !canEditPost && styles.headerToolButtonDisabled,
+                ]}>
+                <Feather name="copy" size={14} color={canEditPost ? '#111827' : '#94A3B8'} />
+                <ThemedText
                   style={[
-                    styles.headerToolButton,
-                    !canEditPost && styles.headerToolButtonDisabled,
+                    styles.headerToolButtonText,
+                    !canEditPost && styles.headerToolButtonTextDisabled,
                   ]}>
-                  <Feather
-                    name="copy"
-                    size={14}
-                    color={canEditPost ? '#111827' : '#94A3B8'}
-                  />
-                  <ThemedText
-                    style={[
-                      styles.headerToolButtonText,
-                      !canEditPost && styles.headerToolButtonTextDisabled,
-                    ]}>
-                    Copy
-                  </ThemedText>
-                </Pressable>
+                  Copy
+                </ThemedText>
+              </Pressable>
 
-                <Pressable
-                  hitSlop={12}
-                  onPress={handleClearPost}
-                  disabled={!canEditPost}
+              <Pressable
+                hitSlop={12}
+                onPress={handleClearPost}
+                disabled={!canEditPost}
+                style={[
+                  styles.headerToolButton,
+                  !canEditPost && styles.headerToolButtonDisabled,
+                ]}>
+                <Feather name="trash-2" size={14} color={canEditPost ? '#DC2626' : '#F87171'} />
+                <ThemedText
                   style={[
-                    styles.headerToolButton,
-                    !canEditPost && styles.headerToolButtonDisabled,
+                    styles.headerToolButtonText,
+                    !canEditPost && styles.headerToolButtonTextDisabled,
                   ]}>
-                  <Feather
-                    name="trash-2"
-                    size={14}
-                    color={canEditPost ? '#DC2626' : '#F87171'}
-                  />
-                  <ThemedText
-                    style={[
-                      styles.headerToolButtonText,
-                      !canEditPost && styles.headerToolButtonTextDisabled,
-                    ]}>
-                    Clear
-                  </ThemedText>
-                </Pressable>
-              </View>
+                  Clear
+                </ThemedText>
+              </Pressable>
             </View>
           </View>
 
@@ -497,6 +464,7 @@ function NewScreen() {
           selectedLanguage={selectedLanguage}
           selectedPostType={selectedPostType}
           selectedBrandPersona={selectedBrandPersona}
+          selectedMode={selectedMode}
           referenceTexts={referenceTexts}
           referenceTextInput={referenceTextInput}
           onClose={handleCloseTune}
@@ -507,6 +475,7 @@ function NewScreen() {
           onSelectLanguage={handleSelectLanguage}
           onSelectPostType={handleSelectPostType}
           onSelectBrandPersona={handleSelectBrandPersona}
+          onSelectMode={handleSelectMode}
           onReferenceTextInputChange={setReferenceTextInput}
           onAddReferenceText={handleAddReferenceText}
           onRemoveReferenceText={handleRemoveReferenceText}
