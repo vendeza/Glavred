@@ -8,10 +8,11 @@ import { ScoreBlock } from '@services/SocialPostService';
 type ScoreModalProps = {
   visible: boolean;
   scores?: ScoreBlock;
+  summary?: string;
   onClose: () => void;
 };
 
-export function ScoreModal({ visible, scores, onClose }: ScoreModalProps) {
+export function ScoreModal({ visible, scores, summary, onClose }: ScoreModalProps) {
   if (!scores) {
     return null;
   }
@@ -65,6 +66,13 @@ export function ScoreModal({ visible, scores, onClose }: ScoreModalProps) {
             style={scoreModalStyles.scoreContent}
             contentContainerStyle={scoreModalStyles.scoreContentContainer}
             showsVerticalScrollIndicator>
+            {summary ? (
+              <View style={scoreModalStyles.summaryCard}>
+                <ThemedText style={scoreModalStyles.summaryTitle}>Summary</ThemedText>
+                <ThemedText style={scoreModalStyles.summaryText}>{summary}</ThemedText>
+              </View>
+            ) : null}
+
             {scoreItems.map((item) => (
               <View key={item.key} style={scoreModalStyles.scoreItem}>
                 <View style={scoreModalStyles.scoreItemHeader}>
@@ -138,6 +146,25 @@ const scoreModalStyles = StyleSheet.create({
   scoreContentContainer: {
     gap: 16,
     paddingBottom: 20,
+  },
+  summaryCard: {
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    gap: 8,
+  },
+  summaryTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+    textTransform: 'uppercase',
+  },
+  summaryText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#374151',
   },
   scoreItem: {
     gap: 8,

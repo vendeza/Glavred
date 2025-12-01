@@ -485,6 +485,7 @@ function NewScreen() {
         <ScoreModal
           visible={isScoreModalVisible}
           scores={socialPostStore.evaluation?.scores}
+          summary={socialPostStore.evaluation?.summary}
           onClose={handleCloseScore}
         />
 
